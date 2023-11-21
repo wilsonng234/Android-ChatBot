@@ -7,7 +7,7 @@ import androidx.room.Query
 
 @Dao
 interface MessageDAO {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(vararg messages: Message)
 
     @Query("SELECT * FROM message")

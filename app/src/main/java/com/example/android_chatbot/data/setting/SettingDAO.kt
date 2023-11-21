@@ -7,7 +7,7 @@ import androidx.room.Query
 
 @Dao
 interface SettingDAO {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(vararg setting: Setting)
 
     @Query("SELECT * FROM setting")
