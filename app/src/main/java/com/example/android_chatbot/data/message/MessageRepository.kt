@@ -1,6 +1,5 @@
-package com.example.android_chatbot.data
+package com.example.android_chatbot.data.message
 
-import androidx.annotation.WorkerThread
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -1,4 +1,4 @@
-package com.example.android_chatbot.data
+package com.example.android_chatbot.data.message
 
 import android.content.Context
 import androidx.room.Database
@@ -16,12 +16,12 @@ abstract class MessageDatabase: RoomDatabase() {
 
         fun getDatabase(context: Context): MessageDatabase {
             synchronized(this) {
-                if (!::INSTANCE.isInitialized) {
+                if (!Companion::INSTANCE.isInitialized) {
                     INSTANCE = Room.databaseBuilder(
                         context.applicationContext,
                         MessageDatabase::class.java,
                         "message.db"
-                    ).allowMainThreadQueries().build()
+                    ).build()
                 }
 
                 return INSTANCE

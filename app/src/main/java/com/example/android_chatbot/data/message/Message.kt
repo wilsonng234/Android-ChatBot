@@ -1,4 +1,4 @@
-package com.example.android_chatbot.data
+package com.example.android_chatbot.data.message
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
