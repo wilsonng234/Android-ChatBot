@@ -15,4 +15,10 @@ class MessageRepository(private val messageDAO: MessageDAO) {
             messageDAO.getAll()
         }
     }
+
+    suspend fun getMessagesByChannel(channel: String): List<Message> {
+        return withContext(Dispatchers.IO) {
+            messageDAO.getMessagesByChannel(channel)
+        }
+    }
 }

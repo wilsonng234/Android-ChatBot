@@ -12,4 +12,7 @@ interface MessageDAO {
 
     @Query("SELECT * FROM message")
     fun getAll(): List<Message>
+
+    @Query("SELECT * FROM message where channel = :channel")
+    fun getMessagesByChannel(channel: String): List<Message>
 }
