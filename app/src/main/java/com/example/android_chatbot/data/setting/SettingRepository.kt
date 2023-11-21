@@ -11,7 +11,7 @@ class SettingRepository(private val settingDAO: SettingDAO) {
         }
     }
 
-    suspend fun getAllMessages(): List<Setting> {
+    suspend fun getAllSettings(): List<Setting> {
         return withContext(Dispatchers.IO) {
             settingDAO.getAll()
         }
