@@ -1,10 +1,11 @@
 package com.example.android_chatbot.data.setting
 
 import android.content.Context
+import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.android_chatbot.data.message.MessageDatabase
 
+@Database(entities = [Setting::class], version = 1)
 abstract class SettingDatabase: RoomDatabase() {
     abstract fun settingDAO(): SettingDAO
 
