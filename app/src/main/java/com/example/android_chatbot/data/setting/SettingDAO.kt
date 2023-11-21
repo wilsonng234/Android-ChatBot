@@ -12,4 +12,7 @@ interface SettingDAO {
 
     @Query("SELECT * FROM setting")
     fun getAll(): List<Setting>
+
+    @Query("SELECT * FROM setting WHERE category = :category")
+    fun getSettingByCategory(category: String): Setting
 }
