@@ -1,6 +1,5 @@
 package com.example.android_chatbot.data.setting
 
-import com.example.android_chatbot.data.message.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
