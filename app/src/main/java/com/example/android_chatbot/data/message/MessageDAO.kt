@@ -10,9 +10,9 @@ interface MessageDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(vararg messages: Message)
 
-    @Query("SELECT * FROM message")
+    @Query("SELECT * FROM message order by created_time asc")
     fun getAll(): List<Message>
 
-    @Query("SELECT * FROM message where channel = :channel")
+    @Query("SELECT * FROM message where channel = :channel order by created_time asc")
     fun getMessagesByChannel(channel: String): List<Message>
 }
