@@ -9,6 +9,9 @@ data class Message(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
+    @ColumnInfo(name = "channel")
+    val channel: String,
+
     @ColumnInfo(name = "role")
     val role: String,
 
