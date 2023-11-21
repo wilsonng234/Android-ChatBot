@@ -14,9 +14,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 
-class HkustAzureOpenAIService(
-    private val apiKey: String,
-    private val endpoint: String
+class AzureOpenAIService(
+    private val apiKey: String, private val endpoint: String
 ) {
     suspend fun getChatResponse(messages: List<Message>): String {
         val client = HttpClient()
