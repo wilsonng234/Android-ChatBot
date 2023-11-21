@@ -2,9 +2,10 @@ package com.example.android_chatbot.data.message
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "message")
+@Entity(tableName = "message", indices = [Index(value= ["channel"], unique = false)])
 data class Message(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
