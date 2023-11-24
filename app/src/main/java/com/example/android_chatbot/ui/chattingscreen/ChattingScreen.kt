@@ -90,6 +90,7 @@ fun MessageBubble(text: String, alignment: Alignment.Horizontal) {
         tonalElevation = 4.dp,
         modifier = Modifier
             .padding(vertical = 4.dp)
+            .fillMaxWidth()
             .wrapContentWidth(alignment)
     ) {
         Text(
