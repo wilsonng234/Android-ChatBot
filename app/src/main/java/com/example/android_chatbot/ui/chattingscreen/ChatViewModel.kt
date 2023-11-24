@@ -16,6 +16,14 @@ class ChatViewModel : ViewModel() {
             }
         }
     }
+
+    fun printMessage(text: String, isUser: Boolean) {
+        if (isUser) {
+            messages.add(Message(text, "user"))
+        } else {
+            messages.add(Message(text, "bot"))
+        }
+    }
 }
 
 data class Message(val content: String, val role: String) {

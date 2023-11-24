@@ -40,5 +40,7 @@ fun GreetingPreview() {
     AndroidChatBotTheme {
         val chatViewModel = viewModel<ChatViewModel>()
         ChattingScreen(chatViewModel)
+        chatViewModel.printMessage("Hi", true)
+        chatViewModel.printMessage("Hello! How can I assist you today?", false)
     }
 }
