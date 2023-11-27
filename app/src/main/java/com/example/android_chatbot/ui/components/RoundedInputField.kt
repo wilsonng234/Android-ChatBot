@@ -61,7 +61,7 @@ fun RoundedInputField(
         trailingIcon = { SendIconButton(onClick = onSendMessage, modifier = modifier) },
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(20.dp),
     )
 }
 
