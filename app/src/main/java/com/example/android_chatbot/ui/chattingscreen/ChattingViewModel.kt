@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.android_chatbot.model.azure.AzureOpenAIService
 import kotlinx.coroutines.launch
 
-class ChatViewModel : ViewModel() {
+class ChattingViewModel : ViewModel() {
     val messages = mutableStateListOf<Message>()
 
     fun sendMessage(text: String, isUser: Boolean = true) {
