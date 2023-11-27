@@ -26,7 +26,7 @@ data class Message(
         return """
             {
                 "role": "$role",
-                "content": "$content"
+                "content": "${content.replace("\n", "\\n")}"
             }
         """.trimIndent()
     }
