@@ -15,9 +15,9 @@ class ChatViewModel : ViewModel() {
         if (isUser) {
             viewModelScope.launch {
                 val service = AzureOpenAIService("ea86fbb837a84230aa8acb2993eae139", "https://hkust.azure-api.net/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-05-15")
+                Log.d("sendMessage", messages.toList().toString())
                 val response = service.getChatResponse(messages.toList())
-//                val format = "{\"messages\":${messages.toList().joinToString(prefix = "[", postfix = "]")}}"
-//                Log.d("TAG", format)
+                Log.d("sendMessage", response.toString())
             }
         }
     }
@@ -39,7 +39,7 @@ data class Message(val content: String, val role: String) {
         return """
             {
                 "role": "$role",
-                "content": "$content"
+                "content": "${content.replace("\n", "\\n")}"
             }
         """.trimIndent()
     }
