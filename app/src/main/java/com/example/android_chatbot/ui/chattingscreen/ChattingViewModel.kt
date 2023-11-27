@@ -14,28 +14,22 @@ class ChattingViewModel(private val channel: String) : ViewModel() {
             ChattingViewModel(channel) as T
     }
 
-
     val messages = mutableStateListOf<Message>()
+    private val chatBotService = AzureOpenAIService(
+        "ea86fbb837a84230aa8acb2993eae139",
+        "https://hkust.azure-api.net/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-05-15"
+    )
 
-    fun sendMessage(text: String, isUser: Boolean = true) {
-        messages.add(Message(text, "user"))
-        if (isUser) {
-            viewModelScope.launch {
-                val service = AzureOpenAIService(
-                    "ea86fbb837a84230aa8acb2993eae139",
-                    "https://hkust.azure-api.net/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-05-15"
-                )
-                val response = service.getChatResponse(messages.toList())
-                messages.add((Message(response, "assistant")))
-            }
-        }
+    fun insertMessage(message: Message) {
+        messages.add(message)
     }
 
-    fun printMessage(text: String, isUser: Boolean) {
-        if (isUser) {
-            messages.add(Message(text, "user"))
-        } else {
-            messages.add(Message(text, "assistant"))
+    fun sendMessage(text: String) {
+        insertMessage(Message(text, "user"))
+
+        viewModelScope.launch {
+            val response = chatBotService.getChatResponse(messages.toList())
+            insertMessage(Message(response, "assistant"))
         }
     }
 }
