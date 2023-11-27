@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,9 +23,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_chatbot.ui.components.RoundedInputField
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChattingScreen(viewModel: ChattingViewModel = viewModel(), modifier: Modifier = Modifier) {
+fun ChattingScreen(channel: String, modifier: Modifier = Modifier) {
+    val viewModel: ChattingViewModel = viewModel(factory = ChattingViewModel.Factory(channel))
+
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier

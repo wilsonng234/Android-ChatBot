@@ -2,11 +2,19 @@ package com.example.android_chatbot.ui.chattingscreen
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.android_chatbot.model.azure.AzureOpenAIService
 import kotlinx.coroutines.launch
 
-class ChattingViewModel : ViewModel() {
+//
+class ChattingViewModel(private val channel: String) : ViewModel() {
+    class Factory(private val channel: String) : ViewModelProvider.NewInstanceFactory() {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T =
+            ChattingViewModel(channel) as T
+    }
+
+
     val messages = mutableStateListOf<Message>()
 
     fun sendMessage(text: String, isUser: Boolean = true) {
