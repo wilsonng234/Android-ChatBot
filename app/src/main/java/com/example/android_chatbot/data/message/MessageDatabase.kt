@@ -6,11 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(entities = [Message::class], version = 1)
-abstract class MessageDatabase: RoomDatabase() {
+abstract class MessageDatabase : RoomDatabase() {
     abstract fun messageDAO(): MessageDAO
 
-    companion object
-    {
+    companion object {
         @Volatile
         private lateinit var INSTANCE: MessageDatabase
 
@@ -18,9 +17,7 @@ abstract class MessageDatabase: RoomDatabase() {
             synchronized(this) {
                 if (!Companion::INSTANCE.isInitialized) {
                     INSTANCE = Room.databaseBuilder(
-                        context.applicationContext,
-                        MessageDatabase::class.java,
-                        "message.db"
+                        context.applicationContext, MessageDatabase::class.java, "message.db"
                     ).build()
                 }
 

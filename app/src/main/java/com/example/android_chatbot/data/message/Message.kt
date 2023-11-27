@@ -5,22 +5,17 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "message", indices = [Index(value= ["channel"], unique = false)])
+@Entity(tableName = "message", indices = [Index(value = ["channel"], unique = false)])
 data class Message(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
-    @ColumnInfo(name = "channel")
-    val channel: String,
+    @ColumnInfo(name = "channel") val channel: String,
 
-    @ColumnInfo(name = "role")
-    val role: String,
+    @ColumnInfo(name = "role") val role: String,
 
-    @ColumnInfo(name = "content")
-    val content: String,
+    @ColumnInfo(name = "content") val content: String,
 
-    @ColumnInfo(name = "created_time")
-    val createdTime: Long
+    @ColumnInfo(name = "created_time") val createdTime: Long
 ) {
     override fun toString(): String {
         return """

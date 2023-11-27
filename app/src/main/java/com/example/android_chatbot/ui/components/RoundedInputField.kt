@@ -71,16 +71,13 @@ fun RoundedInputFieldPreview() {
     AndroidChatBotTheme {
         // A surface container using the 'background' color from the theme
         Surface(
-            modifier = Modifier,
-            color = MaterialTheme.colorScheme.background
+            modifier = Modifier, color = MaterialTheme.colorScheme.background
         ) {
             var prompt by remember { mutableStateOf("") }
             val onSendMessage = {}
 
             RoundedInputField(
-                value = prompt,
-                onValueChange = { prompt = it },
-                onSendMessage = onSendMessage
+                value = prompt, onValueChange = { prompt = it }, onSendMessage = onSendMessage
             )
         }
     }

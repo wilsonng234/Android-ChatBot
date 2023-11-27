@@ -6,11 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(entities = [Setting::class], version = 1)
-abstract class SettingDatabase: RoomDatabase() {
+abstract class SettingDatabase : RoomDatabase() {
     abstract fun settingDAO(): SettingDAO
 
-    companion object
-    {
+    companion object {
         @Volatile
         private lateinit var INSTANCE: SettingDatabase
 
@@ -18,9 +17,7 @@ abstract class SettingDatabase: RoomDatabase() {
             synchronized(this) {
                 if (!Companion::INSTANCE.isInitialized) {
                     INSTANCE = Room.databaseBuilder(
-                        context.applicationContext,
-                        SettingDatabase::class.java,
-                        "setting.db"
+                        context.applicationContext, SettingDatabase::class.java, "setting.db"
                     ).build()
                 }
 

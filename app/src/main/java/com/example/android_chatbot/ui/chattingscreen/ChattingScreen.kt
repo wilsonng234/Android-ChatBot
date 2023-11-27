@@ -38,8 +38,7 @@ fun ChattingScreen(viewModel: ChatViewModel) {
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
-                .padding(16.dp),
-            reverseLayout = true
+                .padding(16.dp), reverseLayout = true
         ) {
             items(viewModel.messages.reversed()) { message ->
                 if (message.isUser) {
@@ -74,8 +73,7 @@ fun ChattingScreen(viewModel: ChatViewModel) {
                 onClick = {
                     viewModel.sendMessage(inputText)
                     inputText = ""
-                },
-                modifier = Modifier.padding(start = 8.dp)
+                }, modifier = Modifier.padding(start = 8.dp)
             ) {
                 Icon(Icons.Default.Send, contentDescription = "Send message")
             }
@@ -94,9 +92,7 @@ fun MessageBubble(text: String, alignment: Alignment.Horizontal) {
             .wrapContentWidth(alignment)
     ) {
         Text(
-            text = text,
-            modifier = Modifier.padding(16.dp),
-            fontSize = 16.sp
+            text = text, modifier = Modifier.padding(16.dp), fontSize = 16.sp
         )
     }
 }
