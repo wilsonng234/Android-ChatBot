@@ -15,8 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AndroidChatBotTheme {
-                val chatViewModel = viewModel<ChatViewModel>()
-                ChattingScreen(chatViewModel)
+                ChattingScreen()
             }
         }
     }
