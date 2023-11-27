@@ -26,7 +26,7 @@ import com.example.android_chatbot.ui.components.RoundedInputField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChattingScreen(viewModel: ChatViewModel = viewModel(), modifier: Modifier = Modifier) {
+fun ChattingScreen(viewModel: ChattingViewModel = viewModel(), modifier: Modifier = Modifier) {
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
