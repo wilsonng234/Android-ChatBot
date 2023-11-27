@@ -35,7 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChattingScreen(viewModel: ChatViewModel = viewModel()) {
+fun ChattingScreen(viewModel: ChatViewModel = viewModel(), modifier: Modifier = Modifier) {
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
