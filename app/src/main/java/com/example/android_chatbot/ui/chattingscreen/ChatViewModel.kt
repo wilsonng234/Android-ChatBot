@@ -15,9 +15,8 @@ class ChatViewModel : ViewModel() {
         if (isUser) {
             viewModelScope.launch {
                 val service = AzureOpenAIService("ea86fbb837a84230aa8acb2993eae139", "https://hkust.azure-api.net/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-05-15")
-                Log.d("sendMessage", messages.toList().toString())
                 val response = service.getChatResponse(messages.toList())
-                Log.d("sendMessage", response.toString())
+                messages.add((Message(response, "assistant")))
             }
         }
     }
@@ -26,7 +25,7 @@ class ChatViewModel : ViewModel() {
         if (isUser) {
             messages.add(Message(text, "user"))
         } else {
-            messages.add(Message(text, "bot"))
+            messages.add(Message(text, "assistant"))
         }
     }
 }
