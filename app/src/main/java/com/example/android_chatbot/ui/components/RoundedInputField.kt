@@ -25,25 +25,6 @@ import com.example.android_chatbot.R
 import com.example.android_chatbot.ui.theme.AndroidChatBotTheme
 
 /**
- * Composable that displays the send icon button
- */
-@Composable
-fun SendIconButton(
-    onClick: () -> Unit = {},
-    color: Color = MaterialTheme.colorScheme.primary,
-    modifier: Modifier = Modifier
-) {
-    IconButton(onClick = onClick, modifier = modifier) {
-        Icon(
-            imageVector = Icons.Rounded.ArrowForward,
-            contentDescription = stringResource(R.string.send),
-            tint = color,
-            modifier = modifier
-        )
-    }
-}
-
-/**
  * Composable that allows the user to input message
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,6 +44,25 @@ fun RoundedInputField(
             .fillMaxWidth()
             .padding(20.dp),
     )
+}
+
+/**
+ * Composable that displays the send icon button
+ */
+@Composable
+private fun SendIconButton(
+    onClick: () -> Unit = {},
+    color: Color = MaterialTheme.colorScheme.primary,
+    modifier: Modifier = Modifier
+) {
+    IconButton(onClick = onClick, modifier = modifier) {
+        Icon(
+            imageVector = Icons.Rounded.ArrowForward,
+            contentDescription = stringResource(R.string.send),
+            tint = color,
+            modifier = modifier
+        )
+    }
 }
 
 @Preview
