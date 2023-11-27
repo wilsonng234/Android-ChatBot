@@ -1,6 +1,5 @@
 package com.example.android_chatbot.ui.chattingscreen
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +13,10 @@ class ChatViewModel : ViewModel() {
         messages.add(Message(text, "user"))
         if (isUser) {
             viewModelScope.launch {
-                val service = AzureOpenAIService("ea86fbb837a84230aa8acb2993eae139", "https://hkust.azure-api.net/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-05-15")
+                val service = AzureOpenAIService(
+                    "ea86fbb837a84230aa8acb2993eae139",
+                    "https://hkust.azure-api.net/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-05-15"
+                )
                 val response = service.getChatResponse(messages.toList())
                 messages.add((Message(response, "assistant")))
             }
