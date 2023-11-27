@@ -30,10 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChattingScreen(viewModel: ChatViewModel) {
+fun ChattingScreen(viewModel: ChatViewModel = viewModel()) {
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
@@ -41,7 +43,7 @@ fun ChattingScreen(viewModel: ChatViewModel) {
                 .padding(16.dp), reverseLayout = true
         ) {
             items(viewModel.messages.reversed()) { message ->
-                if (message.isUser) {
+                if (message.role == "user") {
                     MessageBubble(message.content, Alignment.End)
                 } else {
                     MessageBubble(message.content, Alignment.Start)
