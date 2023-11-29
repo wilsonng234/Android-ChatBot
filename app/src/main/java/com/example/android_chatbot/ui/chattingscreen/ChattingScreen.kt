@@ -18,8 +18,8 @@ import com.example.android_chatbot.ui.components.RoundedInputField
 
 
 @Composable
-fun ChattingScreen(channel: String, modifier: Modifier = Modifier) {
-    val viewModel: ChattingViewModel = viewModel(factory = ChattingViewModel.Factory(channel))
+fun ChattingScreen(channelId: Int, modifier: Modifier = Modifier) {
+    val viewModel: ChattingViewModel = viewModel(factory = ChattingViewModel.Factory(channelId))
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
