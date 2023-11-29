@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.model.azure.AzureOpenAIService
 import kotlinx.coroutines.launch
 
@@ -25,25 +26,25 @@ class ChattingViewModel(private val channelId: Int) : ViewModel() {
     }
 
     fun sendMessage(text: String) {
-        insertMessage(Message(text, "user"))
+        insertMessage(
+            Message(
+                channelId = channelId,
+                role = "user",
+                content = text,
+                createdTime = System.currentTimeMillis()
+            )
+        )
 
         viewModelScope.launch {
             val response = chatBotService.getChatResponse(messages.toList())
-            insertMessage(Message(response, "assistant"))
+            insertMessage(
+                Message(
+                    channelId = channelId,
+                    role = "assistant",
+                    content = response,
+                    createdTime = System.currentTimeMillis()
+                )
+            )
         }
-    }
-}
-
-data class Message(val content: String, val role: String) {
-    val isUser: Boolean
-        get() = role == "user"
-
-    override fun toString(): String {
-        return """
-            {
-                "role": "$role",
-                "content": "${content.replace("\n", "\\n")}"
-            }
-        """.trimIndent()
     }
 }

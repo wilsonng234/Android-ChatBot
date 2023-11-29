@@ -1,6 +1,6 @@
 package com.example.android_chatbot.model.azure
 
-import com.example.android_chatbot.ui.chattingscreen.Message
+import com.example.android_chatbot.data.message.Message
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.post
