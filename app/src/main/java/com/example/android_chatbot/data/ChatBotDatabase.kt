@@ -12,20 +12,20 @@ import com.example.android_chatbot.data.setting.Setting
 import com.example.android_chatbot.data.setting.SettingDAO
 
 @Database(entities = [Channel::class, Message::class, Setting::class], version = 1, exportSchema = false)
-abstract class ChatbotDatabase : RoomDatabase() {
+abstract class ChatBotDatabase : RoomDatabase() {
     abstract fun channelDAO(): ChannelDAO
     abstract fun messageDAO(): MessageDAO
     abstract fun settingDAO(): SettingDAO
 
     companion object {
         @Volatile
-        private lateinit var INSTANCE: ChatbotDatabase
+        private lateinit var INSTANCE: ChatBotDatabase
 
-        fun getDatabase(context: Context): ChatbotDatabase {
+        fun getDatabase(context: Context): ChatBotDatabase {
             synchronized(this) {
                 if (!Companion::INSTANCE.isInitialized) {
                     INSTANCE = Room.databaseBuilder(
-                        context.applicationContext, ChatbotDatabase::class.java, "channel.db"
+                        context.applicationContext, ChatBotDatabase::class.java, "channel.db"
                     ).build()
                 }
 

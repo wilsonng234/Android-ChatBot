@@ -6,9 +6,9 @@ import com.example.android_chatbot.data.message.MessageRepository
 import com.example.android_chatbot.data.setting.SettingRepository
 
 class ChatBotApplication : Application() {
-    val chatbotDatabase by lazy { ChatbotDatabase.getDatabase(this) }
+    private val chatBotDatabase by lazy { ChatBotDatabase.getDatabase(this) }
 
-    val channelRepository by lazy { ChannelRepository(chatbotDatabase.channelDAO()) }
-    val messageRepository by lazy { MessageRepository(chatbotDatabase.messageDAO()) }
-    val settingRepository by lazy { SettingRepository(chatbotDatabase.settingDAO()) }
+    val channelRepository by lazy { ChannelRepository(chatBotDatabase.channelDAO()) }
+    val messageRepository by lazy { MessageRepository(chatBotDatabase.messageDAO()) }
+    val settingRepository by lazy { SettingRepository(chatBotDatabase.settingDAO()) }
 }
