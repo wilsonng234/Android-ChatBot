@@ -29,11 +29,7 @@ fun ChattingScreen(channel: String, modifier: Modifier = Modifier) {
                 .padding(16.dp), reverseLayout = true
         ) {
             items(viewModel.messages.reversed()) { message ->
-                if (message.role == "user") {
-                    MessageBubble(message.content, Alignment.End)
-                } else {
-                    MessageBubble(message.content, Alignment.Start)
-                }
+                MessageBubble(message)
             }
         }
 

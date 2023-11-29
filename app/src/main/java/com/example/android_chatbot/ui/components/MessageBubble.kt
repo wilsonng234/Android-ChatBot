@@ -11,19 +11,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.android_chatbot.ui.chattingscreen.Message
 
 @Composable
-fun MessageBubble(text: String, alignment: Alignment.Horizontal) {
+fun MessageBubble(message: Message) {
     Surface(
         shape = MaterialTheme.shapes.medium,
         tonalElevation = 4.dp,
         modifier = Modifier
             .padding(vertical = 4.dp)
             .fillMaxWidth()
-            .wrapContentWidth(alignment)
+            .wrapContentWidth(if (message.role == "user") Alignment.End else Alignment.Start)
     ) {
         Text(
-            text = text, modifier = Modifier.padding(16.dp), fontSize = 16.sp
+            text = message.content, modifier = Modifier.padding(16.dp), fontSize = 16.sp
         )
     }
 }
