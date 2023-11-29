@@ -2,10 +2,20 @@ package com.example.android_chatbot.data.message
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.android_chatbot.data.channel.Channel
 
-@Entity(tableName = "message", indices = [Index(value = ["channel_id"], unique = false)])
+@Entity(tableName = "message", indices = [Index(value = ["channel_id"], unique = false)],
+    foreignKeys = [
+        ForeignKey(
+            entity = Channel::class,
+            parentColumns = ["id"],
+            childColumns = ["channel_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ])
 data class Message(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
