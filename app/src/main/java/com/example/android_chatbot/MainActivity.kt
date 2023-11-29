@@ -11,7 +11,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AndroidChatBotTheme {
-                ChattingScreen("channel")
+                ChattingScreen(channelId = 0)
             }
         }
     }
