@@ -16,9 +16,9 @@ class MessageRepository(private val messageDAO: MessageDAO) {
         }
     }
 
-    suspend fun getMessagesByChannel(channel: String): List<Message> {
+    suspend fun getMessagesByChannelId(channelId: String): List<Message> {
         return withContext(Dispatchers.IO) {
-            messageDAO.getMessagesByChannel(channel)
+            messageDAO.getMessagesByChannelId(channelId)
         }
     }
 }
