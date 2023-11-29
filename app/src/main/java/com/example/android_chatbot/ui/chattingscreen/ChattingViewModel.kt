@@ -8,10 +8,10 @@ import com.example.android_chatbot.model.azure.AzureOpenAIService
 import kotlinx.coroutines.launch
 
 //
-class ChattingViewModel(private val channel: String) : ViewModel() {
-    class Factory(private val channel: String) : ViewModelProvider.NewInstanceFactory() {
+class ChattingViewModel(private val channelId: Int) : ViewModel() {
+    class Factory(private val channelId: Int) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            ChattingViewModel(channel) as T
+            ChattingViewModel(channelId) as T
     }
 
     val messages = mutableStateListOf<Message>()
