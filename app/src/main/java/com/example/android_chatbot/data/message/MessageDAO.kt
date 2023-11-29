@@ -14,5 +14,5 @@ interface MessageDAO {
     fun getAll(): List<Message>
 
     @Query("SELECT * FROM message where channel_id = :channelId order by created_time asc")
-    fun getMessagesByChannelId(channelId: String): List<Message>
+    fun getMessagesByChannelId(channelId: Int): List<Message>
 }
