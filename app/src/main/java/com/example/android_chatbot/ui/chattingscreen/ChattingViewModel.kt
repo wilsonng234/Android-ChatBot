@@ -5,21 +5,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.android_chatbot.data.message.Message
+import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.model.azure.AzureOpenAIService
 import kotlinx.coroutines.launch
 
 //
-class ChattingViewModel(private val channelId: Int) : ViewModel() {
-    class Factory(private val channelId: Int) : ViewModelProvider.NewInstanceFactory() {
+class ChattingViewModel(private val settingDAO: SettingDAO, private val channelId: Int) :
+    ViewModel() {
+    class Factory(private val settingDAO: SettingDAO, private val channelId: Int) :
+        ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            ChattingViewModel(channelId) as T
+            ChattingViewModel(settingDAO, channelId) as T
     }
 
     val messages = mutableStateListOf<Message>()
-    private val chatBotService = AzureOpenAIService(
-        "ea86fbb837a84230aa8acb2993eae139",
-        "https://hkust.azure-api.net/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-05-15"
-    )
+
+    init {
+        AzureOpenAIService.init(settingDAO)
+    }
 
     fun insertMessage(message: Message) {
         messages.add(message)
@@ -36,7 +39,7 @@ class ChattingViewModel(private val channelId: Int) : ViewModel() {
         )
 
         viewModelScope.launch {
-            val response = chatBotService.getChatResponse(messages.toList())
+            val response = AzureOpenAIService.getChatResponse(messages.toList())
             insertMessage(
                 Message(
                     channelId = channelId,
