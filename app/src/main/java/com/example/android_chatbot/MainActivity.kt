@@ -14,7 +14,7 @@ import com.example.android_chatbot.ui.chattingscreen.ChattingScreen
 import com.example.android_chatbot.ui.theme.AndroidChatBotTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private val channelDAO: ChannelDAO by lazy { (application as ChatBotApplication).channelDAO }
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             channelDAO.insertAll(
-                Channel(id=1, service = "azure")
+                Channel(id = 1, service = "azure")
             )
             settingDAO.insertAll(
                 Setting(service = "azure", apiKey = "ea86fbb837a84230aa8acb2993eae139")
