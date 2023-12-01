@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -48,7 +49,9 @@ fun ChatBotTopAppBar(
         IconButton(onClick = handleNavigationIconClicked(canNavigateBack)) {
             Icon(
                 imageVector = if (!canNavigateBack) Icons.Filled.Menu else Icons.Filled.ArrowBack,
-                contentDescription = if (!canNavigateBack) "Drawer" else "Back"
+                contentDescription = if (!canNavigateBack) stringResource(R.string.drawer_button) else stringResource(
+                    R.string.back_button
+                )
             )
         }
     })
