@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.android_chatbot.data.ChatBotApplication
+import com.example.android_chatbot.data.channel.Channel
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.Setting
@@ -23,7 +24,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        CoroutineScope(Dispatchers.IO).async {
+        CoroutineScope(Dispatchers.IO).launch {
+            channelDAO.insertAll(
+                Channel(id=1, service = "azure")
+            )
             settingDAO.insertAll(
                 Setting(service = "azure", apiKey = "ea86fbb837a84230aa8acb2993eae139")
             )
