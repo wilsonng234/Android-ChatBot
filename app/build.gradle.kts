@@ -73,6 +73,14 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
+    val navVersion = "2.7.5"
+    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:$navVersion")
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+
+    androidTestImplementation("androidx.navigation:navigation-testing:$navVersion")
+
     testImplementation("junit:junit:4.13.2")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
