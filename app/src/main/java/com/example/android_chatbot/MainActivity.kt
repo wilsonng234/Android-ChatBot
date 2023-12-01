@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import com.example.android_chatbot.data.ChatBotApplication
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
+import com.example.android_chatbot.data.setting.Setting
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.ui.chattingscreen.ChattingScreen
 import com.example.android_chatbot.ui.theme.AndroidChatBotTheme
@@ -23,6 +24,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         CoroutineScope(Dispatchers.IO).async {
+            settingDAO.insertAll(
+                Setting(service = "azure", apiKey = "ea86fbb837a84230aa8acb2993eae139")
+            )
+
             Log.d("onCreate", "onCreate: ${channelDAO.getAll()}")
             Log.d("onCreate", "onCreate: ${messageDAO.getAll()}")
             Log.d("onCreate", "onCreate: ${settingDAO.getAll()}")
@@ -30,7 +35,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AndroidChatBotTheme {
-                ChattingScreen(channelId = 0)
+                ChattingScreen(
+                    channelDAO = channelDAO,
+                    messageDAO = messageDAO,
+                    settingDAO = settingDAO,
+                    channelId = 1
+                )
             }
         }
     }

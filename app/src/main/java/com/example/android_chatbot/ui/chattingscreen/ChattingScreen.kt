@@ -13,13 +13,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.android_chatbot.data.channel.ChannelDAO
+import com.example.android_chatbot.data.message.MessageDAO
+import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.ui.components.MessageBubble
 import com.example.android_chatbot.ui.components.RoundedInputField
 
 
 @Composable
-fun ChattingScreen(channelId: Int, modifier: Modifier = Modifier) {
-    val viewModel: ChattingViewModel = viewModel(factory = ChattingViewModel.Factory(channelId))
+fun ChattingScreen(
+    channelDAO: ChannelDAO,
+    messageDAO: MessageDAO,
+    settingDAO: SettingDAO,
+    channelId: Int,
+    modifier: Modifier = Modifier
+) {
+    val viewModel: ChattingViewModel = viewModel(factory = ChattingViewModel.Factory(settingDAO, channelId))
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
