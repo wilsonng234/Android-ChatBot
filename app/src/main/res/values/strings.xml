@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Android-ChatBot</string>
     <string name="send">Send</string>
+    <string name="all_chats">All Chats</string>
+    <string name="select_bot">Select Bot</string>
+    <string name="settings">Settings</string>
+
 </resources>
