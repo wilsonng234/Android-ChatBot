@@ -8,13 +8,20 @@ import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.model.azure.AzureOpenAIService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 //
-class ChattingViewModel(private val messageDAO: MessageDAO, private val settingDAO: SettingDAO, private val channelId: Int) :
-    ViewModel() {
-    class Factory(private val messageDAO: MessageDAO, private val settingDAO: SettingDAO, private val channelId: Int) :
-        ViewModelProvider.NewInstanceFactory() {
+class ChattingViewModel(
+    private val messageDAO: MessageDAO,
+    private val settingDAO: SettingDAO,
+    private val channelId: Int
+) : ViewModel() {
+    class Factory(
+        private val messageDAO: MessageDAO,
+        private val settingDAO: SettingDAO,
+        private val channelId: Int
+    ) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
             ChattingViewModel(messageDAO, settingDAO, channelId) as T
     }
@@ -27,6 +34,10 @@ class ChattingViewModel(private val messageDAO: MessageDAO, private val settingD
 
     fun insertMessage(message: Message) {
         messages.add(message)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            messageDAO.insertAll(message)
+        }
     }
 
     fun sendMessage(text: String) {
