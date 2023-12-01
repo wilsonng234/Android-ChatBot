@@ -28,7 +28,7 @@ fun ChattingScreen(
     channelId: Int,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: ChattingViewModel = viewModel(factory = ChattingViewModel.Factory(settingDAO, channelId))
+    val viewModel: ChattingViewModel = viewModel(factory = ChattingViewModel.Factory(messageDAO, settingDAO, channelId))
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
