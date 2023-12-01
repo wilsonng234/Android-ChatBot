@@ -5,17 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.android_chatbot.data.message.Message
+import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.model.azure.AzureOpenAIService
 import kotlinx.coroutines.launch
 
 //
-class ChattingViewModel(private val settingDAO: SettingDAO, private val channelId: Int) :
+class ChattingViewModel(private val messageDAO: MessageDAO, private val settingDAO: SettingDAO, private val channelId: Int) :
     ViewModel() {
-    class Factory(private val settingDAO: SettingDAO, private val channelId: Int) :
+    class Factory(private val messageDAO: MessageDAO, private val settingDAO: SettingDAO, private val channelId: Int) :
         ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            ChattingViewModel(settingDAO, channelId) as T
+            ChattingViewModel(messageDAO, settingDAO, channelId) as T
     }
 
     val messages = mutableStateListOf<Message>()
