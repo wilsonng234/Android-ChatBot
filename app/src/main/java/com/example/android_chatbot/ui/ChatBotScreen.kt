@@ -1,5 +1,6 @@
 package com.example.android_chatbot.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -25,7 +26,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.android_chatbot.R
 import kotlinx.coroutines.launch
+
+enum class ChatBotScreen(@StringRes val title: Int) {
+    Start(title = R.string.app_name), AllChats(title = R.string.all_chats), SelectBot(title = R.string.select_bot), Setting(
+        title = R.string.settings
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
