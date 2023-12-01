@@ -11,7 +11,11 @@ import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.Setting
 import com.example.android_chatbot.data.setting.SettingDAO
 
-@Database(entities = [Channel::class, Message::class, Setting::class], version = 1, exportSchema = false)
+@Database(
+    entities = [Channel::class, Message::class, Setting::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class ChatBotDatabase : RoomDatabase() {
     abstract fun channelDAO(): ChannelDAO
     abstract fun messageDAO(): MessageDAO
