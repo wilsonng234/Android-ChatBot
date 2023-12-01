@@ -31,7 +31,14 @@ object AzureOpenAIService {
         }
     }
 
-    suspend fun getChatResponse(messages: List<Message>): String {
+    /**
+        * Get the response from the Azure OpenAI service.
+     * @param messages The list of messages to be sent to the service.
+     * @return The response from the service.
+     *   The first element is the response content.
+     *   The second element is whether the response is successful.
+     **/
+    suspend fun getChatResponse(messages: List<Message>): Pair<String, Boolean> {
         val client = HttpClient()
         val responseBody: HttpResponse = client.post {
             url(endPoint)
@@ -49,11 +56,11 @@ object AzureOpenAIService {
             val message = choices.getJSONObject(0).get("message") as JSONObject
             val content = message.get("content")
 
-            content.toString()
+            Pair(content.toString(), true)
         } catch (e: Exception) {
             Log.e("AzureOpenAIService", "getChatResponse: ${e.message}")
 
-            "The service is not available now, please try again later."
+            Pair("The service is not available now, please try again later.", false)
         }
     }
 }
