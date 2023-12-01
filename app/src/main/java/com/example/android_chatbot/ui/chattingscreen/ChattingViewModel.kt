@@ -52,14 +52,16 @@ class ChattingViewModel(
 
         viewModelScope.launch {
             val response = AzureOpenAIService.getChatResponse(messages.toList())
-            insertMessage(
-                Message(
-                    channelId = channelId,
-                    role = "assistant",
-                    content = response,
-                    createdTime = System.currentTimeMillis()
+            if (response.second) {
+                insertMessage(
+                    Message(
+                        channelId = channelId,
+                        role = "assistant",
+                        content = response.first,
+                        createdTime = System.currentTimeMillis()
+                    )
                 )
-            )
+            }
         }
     }
 }
