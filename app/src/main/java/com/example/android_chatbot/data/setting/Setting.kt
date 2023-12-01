@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 data class Setting(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
-    @ColumnInfo(name = "api_key") val apiKey: String,
-
     @ColumnInfo(name = "service") val service: String,
+
+    @ColumnInfo(name = "api_key") val apiKey: String
 )
