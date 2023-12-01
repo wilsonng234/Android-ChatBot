@@ -1,5 +1,6 @@
 package com.example.android_chatbot.model.azure
 
+import android.util.Log
 import com.example.android_chatbot.data.message.Message
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
@@ -19,7 +20,7 @@ class AzureOpenAIService(
 ) {
     suspend fun getChatResponse(messages: List<Message>): String {
         val client = HttpClient()
-        val response: HttpResponse = client.post {
+        val responseBody: HttpResponse = client.post {
             url(endpoint)
             header("api-key", apiKey)
             contentType(ContentType.Application.Json)
@@ -28,11 +29,18 @@ class AzureOpenAIService(
         }
         client.close()
 
-        val responseJson = JSONObject(response.bodyAsText())
-        val choices = responseJson.getJSONArray("choices") as JSONArray
-        val message = choices.getJSONObject(0).get("message") as JSONObject
-        val content = message.get("content")
+        return try {
+            val responseJson = JSONObject(responseBody.bodyAsText())
 
-        return content.toString()
+            val choices = responseJson.getJSONArray("choices") as JSONArray
+            val message = choices.getJSONObject(0).get("message") as JSONObject
+            val content = message.get("content")
+
+            content.toString()
+        } catch (e: Exception) {
+            Log.e("AzureOpenAIService", "getChatResponse: ${e.message}")
+
+            "The service is not available now, please try again later."
+        }
     }
 }
