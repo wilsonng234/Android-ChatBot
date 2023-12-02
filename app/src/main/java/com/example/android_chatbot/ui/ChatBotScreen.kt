@@ -92,11 +92,9 @@ fun ChatBotApp(
         }
     }
 
-    fun handleMenuItemClicked(): () -> Unit {
-        return {
-            scope.launch {
+    fun handleMenuItemClicked() {
+        scope.launch {
                 drawerState.close()
-            }
         }
     }
 
