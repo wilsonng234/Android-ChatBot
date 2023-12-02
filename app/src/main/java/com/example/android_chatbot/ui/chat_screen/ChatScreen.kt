@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,8 @@ fun ChatScreen(
 ) {
     val viewModel: ChatViewModel =
         viewModel(factory = ChatViewModel.Factory(messageDAO, settingDAO, channelId))
+    val channelMessages by messageDAO.getMessagesByChannelId(channelId)
+        .collectAsState(initial = emptyList())
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -37,14 +40,14 @@ fun ChatScreen(
                 .weight(1f)
                 .padding(16.dp), reverseLayout = true
         ) {
-            items(viewModel.messages.reversed()) { message ->
+            items(channelMessages.reversed()) { message ->
                 MessageBubble(message)
             }
         }
 
         var inputPrompt by remember { mutableStateOf("") }
         RoundedInputField(inputPrompt, onValueChange = { inputPrompt = it }, onSendMessage = {
-            viewModel.sendMessage(inputPrompt)
+            viewModel.sendMessage(inputPrompt, channelMessages)
             inputPrompt = ""
         }, modifier = modifier
         )

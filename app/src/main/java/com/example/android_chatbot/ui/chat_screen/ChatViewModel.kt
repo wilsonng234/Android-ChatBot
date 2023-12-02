@@ -1,6 +1,5 @@
 package com.example.android_chatbot.ui.chat_screen
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -26,21 +25,17 @@ class ChatViewModel(
             ChatViewModel(messageDAO, settingDAO, channelId) as T
     }
 
-    val messages = mutableStateListOf<Message>()
-
     init {
         AzureOpenAIService.init(settingDAO)
     }
 
     fun insertMessage(message: Message) {
-        messages.add(message)
-
         viewModelScope.launch(Dispatchers.IO) {
             messageDAO.insertAll(message)
         }
     }
 
-    fun sendMessage(text: String) {
+    fun sendMessage(text: String, channelMessages: List<Message>) {
         insertMessage(
             Message(
                 channelId = channelId,
@@ -51,7 +46,7 @@ class ChatViewModel(
         )
 
         viewModelScope.launch {
-            val response = AzureOpenAIService.getChatResponse(messages.toList())
+            val response = AzureOpenAIService.getChatResponse(channelMessages)
             if (response.second) {
                 insertMessage(
                     Message(
