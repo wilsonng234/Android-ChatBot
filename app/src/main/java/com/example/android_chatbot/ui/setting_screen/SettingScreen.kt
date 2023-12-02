@@ -1,4 +1,4 @@
-package com.example.android_chatbot.ui
+package com.example.android_chatbot.ui.setting_screen
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
