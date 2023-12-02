@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             channelDAO.insertAll(
-                Channel(id = 1, service = "azure")
+                Channel(id = 1, service = "Azure OpenAI")
             )
             settingDAO.insertAll(
                 Setting(service = "Azure OpenAI", apiKey = "ea86fbb837a84230aa8acb2993eae139")

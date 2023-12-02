@@ -32,7 +32,7 @@ object AzureOpenAIService {
     }
 
     /**
-        * Get the response from the Azure OpenAI service.
+     * Get the response from the Azure OpenAI service.
      * @param messages The list of messages to be sent to the service.
      * @return The response from the service.
      *   The first element is the response content.
@@ -51,7 +51,7 @@ object AzureOpenAIService {
 
         return try {
             val responseJson = JSONObject(responseBody.bodyAsText())
-
+            Log.d("AzureOpenAIService", "getChatResponse: $responseJson")
             val choices = responseJson.getJSONArray("choices") as JSONArray
             val message = choices.getJSONObject(0).get("message") as JSONObject
             val content = message.get("content")
