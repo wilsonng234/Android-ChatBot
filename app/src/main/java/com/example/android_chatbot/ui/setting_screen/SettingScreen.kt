@@ -17,13 +17,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_chatbot.data.DataSource
 import com.example.android_chatbot.data.setting.SettingDAO
+import com.example.android_chatbot.ui.chat_screen.ChatViewModel
 import com.example.android_chatbot.ui.components.FormInputField
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,13 +35,17 @@ import com.example.android_chatbot.ui.components.FormInputField
 fun SettingScreen(
     settingDAO: SettingDAO, modifier: Modifier = Modifier
 ) {
+    val viewModel: SettingViewModel =
+        viewModel(factory = SettingViewModel.Factory(settingDAO))
+    val settings by settingDAO.getAll().collectAsState(initial = emptyList())
+
     Column(
         modifier = modifier.padding(vertical = 8.dp)
     ) {
-        for (i in 1..3) {
+        for (setting in settings) {
             val (expanded, setExpanded) = remember { mutableStateOf(false) }
             val (selectedOptionText, setSelectedOptionText) = remember { mutableStateOf("") }
-            val (apiKey, setApiKey) = remember { mutableStateOf("") }
+            val (apiKey, setApiKey) = remember { mutableStateOf(setting.apiKey) }
 
             apiKeyInputSection(
                 expanded = expanded,
