@@ -1,4 +1,4 @@
-package com.example.android_chatbot.ui.chattingscreen
+package com.example.android_chatbot.ui.chatscreen
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 //
-class ChattingViewModel(
+class ChatViewModel(
     private val messageDAO: MessageDAO,
     private val settingDAO: SettingDAO,
     private val channelId: Int
@@ -23,7 +23,7 @@ class ChattingViewModel(
         private val channelId: Int
     ) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
-            ChattingViewModel(messageDAO, settingDAO, channelId) as T
+            ChatViewModel(messageDAO, settingDAO, channelId) as T
     }
 
     val messages = mutableStateListOf<Message>()
