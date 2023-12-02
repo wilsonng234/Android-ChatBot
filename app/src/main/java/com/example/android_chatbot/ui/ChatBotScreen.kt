@@ -1,5 +1,6 @@
 package com.example.android_chatbot.ui
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,7 +58,8 @@ enum class ChatBotScreen(@StringRes val title: Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatBotTopAppBar(
-    canNavigateBack: Boolean = false,
+    currentScreen: String,
+    canNavigateBack: Boolean,
     handleNavigationIconClicked: (Boolean) -> () -> Unit = { {} },
     modifier: Modifier = Modifier
 ) {
@@ -84,6 +86,8 @@ fun ChatBotApp(
     navHostController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navHostController.currentBackStackEntryAsState()
+    val currentScreen = backStackEntry?.destination?.route ?: ChatBotScreen.Start.name
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -164,7 +168,9 @@ fun ChatBotApp(
         }
     }) {
         Scaffold(topBar = {
-            ChatBotTopAppBar(handleNavigationIconClicked = { handleNavigationIconClicked(it) })
+            ChatBotTopAppBar(currentScreen = currentScreen,
+                canNavigateBack = navHostController.previousBackStackEntry != null,
+                handleNavigationIconClicked = { handleNavigationIconClicked(it) })
         }) { paddingValues ->
             Column(
                 modifier = Modifier
