@@ -1,4 +1,4 @@
-package com.example.android_chatbot.ui.chatscreen
+package com.example.android_chatbot.ui.chat_screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

@@ -43,7 +43,7 @@ import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.ui.SettingScreen
-import com.example.android_chatbot.ui.chatscreen.ChatScreen
+import com.example.android_chatbot.ui.chat_screen.ChatScreen
 import com.example.android_chatbot.ui.components.MenuItemCard
 import kotlinx.coroutines.launch
 
