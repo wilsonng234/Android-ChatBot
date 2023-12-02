@@ -10,7 +10,6 @@ import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.Setting
 import com.example.android_chatbot.data.setting.SettingDAO
-import com.example.android_chatbot.ui.ChatBotApp
 import com.example.android_chatbot.ui.theme.AndroidChatBotTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
