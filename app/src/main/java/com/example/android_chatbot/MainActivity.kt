@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.android_chatbot.data.ChatBotApplication
 import com.example.android_chatbot.data.channel.Channel
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
@@ -28,7 +27,7 @@ class MainActivity : ComponentActivity() {
                 Channel(id = 1, service = "azure")
             )
             settingDAO.insertAll(
-                Setting(service = "azure", apiKey = "ea86fbb837a84230aa8acb2993eae139")
+                Setting(service = "Azure OpenAI", apiKey = "ea86fbb837a84230aa8acb2993eae139")
             )
 
             Log.d("onCreate", "onCreate: ${channelDAO.getAll()}")

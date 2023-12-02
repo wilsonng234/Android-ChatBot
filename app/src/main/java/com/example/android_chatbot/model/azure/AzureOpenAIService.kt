@@ -25,7 +25,7 @@ object AzureOpenAIService {
 
     fun init(settingDAO: SettingDAO) {
         CoroutineScope(Dispatchers.IO).launch {
-            apiKey = settingDAO.getSettingByService(service = "azure").apiKey
+            apiKey = settingDAO.getSettingByService(service = "Azure OpenAI").apiKey
             endPoint =
                 "https://hkust.azure-api.net/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-05-15"
         }
