@@ -4,10 +4,14 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Face
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.android_chatbot.R
+import com.example.android_chatbot.ui.components.MenuItemCard
 import kotlinx.coroutines.launch
 
 enum class ChatBotScreen(@StringRes val title: Int) {
@@ -87,10 +92,40 @@ fun ChatBotApp(
         }
     }
 
+    fun handleMenuItemClicked(): () -> Unit {
+        return {
+            scope.launch {
+                drawerState.close()
+            }
+        }
+    }
+
+    val menuItemIds = listOf(
+        R.string.all_chats, R.string.select_bot, R.string.settings
+    )
     ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
         ModalDrawerSheet {
             Text("Android ChatBot", modifier = Modifier.padding(16.dp))
             Divider()
+
+            menuItemIds.map { menuItemId ->
+                MenuItemCard(
+                    icon = when (menuItemId) {
+                        R.string.all_chats -> Icons.Outlined.Face
+                        R.string.select_bot -> Icons.Outlined.Person
+                        R.string.settings -> Icons.Outlined.Settings
+
+                        else -> {
+                            throw IllegalStateException("Unknown menu item id: $menuItemId")
+                        }
+                    },
+                    content = stringResource(id = menuItemId),
+                    handleMenuItemClicked = { handleMenuItemClicked() },
+                    modifier = Modifier.height(60.dp)
+                )
+
+                Divider()
+            }
         }
     }) {
         Scaffold(topBar = {
