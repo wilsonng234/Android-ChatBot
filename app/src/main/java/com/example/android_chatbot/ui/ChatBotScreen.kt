@@ -37,6 +37,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.android_chatbot.R
+import com.example.android_chatbot.data.channel.ChannelDAO
+import com.example.android_chatbot.data.message.MessageDAO
+import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.ui.components.MenuItemCard
 import kotlinx.coroutines.launch
 
@@ -70,6 +73,9 @@ fun ChatBotTopAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatBotApp(
+    channelDAO: ChannelDAO,
+    messageDAO: MessageDAO,
+    settingDAO: SettingDAO,
     navHostController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navHostController.currentBackStackEntryAsState()
@@ -94,7 +100,7 @@ fun ChatBotApp(
 
     fun handleMenuItemClicked() {
         scope.launch {
-                drawerState.close()
+            drawerState.close()
         }
     }
 
