@@ -10,15 +10,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_chatbot.data.channel.ChannelDAO
+import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
+import com.example.android_chatbot.model.azure.AzureOpenAIService
 import com.example.android_chatbot.ui.components.MessageBubble
 import com.example.android_chatbot.ui.components.RoundedInputField
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -45,11 +49,42 @@ fun ChatScreen(
             }
         }
 
-        var inputPrompt by remember { mutableStateOf("") }
-        RoundedInputField(inputPrompt, onValueChange = { inputPrompt = it }, onSendMessage = {
-            viewModel.sendMessage(inputPrompt, channelMessages)
-            inputPrompt = ""
+        val (inputPrompt, setInputPrompt) = remember { mutableStateOf("") }
+        RoundedInputField(inputPrompt, onValueChange = { setInputPrompt(it) }, onSendMessage = {
+            handleOnSendMessage(
+                messageDAO, channelId, channelMessages, inputPrompt, setInputPrompt
+            )
         }, modifier = modifier
+        )
+    }
+}
+
+private fun handleOnSendMessage(
+    messageDAO: MessageDAO,
+    channelId: Int,
+    channelMessages: List<Message>,
+    inputPrompt: String,
+    setInputPrompt: (String) -> Unit
+) {
+    CoroutineScope(Dispatchers.IO).launch {
+        val inputMessage = Message(
+            channelId = channelId,
+            role = "user",
+            content = inputPrompt,
+            createdTime = System.currentTimeMillis()
+        )
+
+        messageDAO.insertAll(inputMessage)
+        setInputPrompt("")
+
+        val response = AzureOpenAIService.getChatResponse(channelMessages.plus(inputMessage))
+        messageDAO.insertAll(
+            Message(
+                channelId = channelId,
+                role = "assistant",
+                content = response.first,
+                createdTime = System.currentTimeMillis()
+            )
         )
     }
 }
