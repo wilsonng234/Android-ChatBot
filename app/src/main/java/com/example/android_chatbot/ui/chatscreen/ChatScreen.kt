@@ -1,4 +1,4 @@
-package com.example.android_chatbot.ui.chattingscreen
+package com.example.android_chatbot.ui.chatscreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,15 +21,15 @@ import com.example.android_chatbot.ui.components.RoundedInputField
 
 
 @Composable
-fun ChattingScreen(
+fun ChatScreen(
     channelDAO: ChannelDAO,
     messageDAO: MessageDAO,
     settingDAO: SettingDAO,
     channelId: Int,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: ChattingViewModel =
-        viewModel(factory = ChattingViewModel.Factory(messageDAO, settingDAO, channelId))
+    val viewModel: ChatViewModel =
+        viewModel(factory = ChatViewModel.Factory(messageDAO, settingDAO, channelId))
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(

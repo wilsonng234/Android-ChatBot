@@ -43,7 +43,7 @@ import com.example.android_chatbot.R
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
-import com.example.android_chatbot.ui.chattingscreen.ChattingScreen
+import com.example.android_chatbot.ui.chatscreen.ChatScreen
 import com.example.android_chatbot.ui.components.MenuItemCard
 import kotlinx.coroutines.launch
 
@@ -190,7 +190,7 @@ fun ChatBotApp(
                         route = ChatBotScreen.Chat.name + "/{channelId}",
                         arguments = listOf(navArgument("channelId") { type = NavType.IntType })
                     ) {
-                        ChattingScreen(
+                        ChatScreen(
                             channelDAO = channelDAO,
                             messageDAO = messageDAO,
                             settingDAO = settingDAO,
