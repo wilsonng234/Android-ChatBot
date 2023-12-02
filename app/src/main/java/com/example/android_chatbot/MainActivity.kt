@@ -10,7 +10,7 @@ import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.Setting
 import com.example.android_chatbot.data.setting.SettingDAO
-import com.example.android_chatbot.ui.chattingscreen.ChattingScreen
+import com.example.android_chatbot.ui.ChatBotApp
 import com.example.android_chatbot.ui.theme.AndroidChatBotTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,11 +39,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AndroidChatBotTheme {
-                ChattingScreen(
+                ChatBotApp(
                     channelDAO = channelDAO,
                     messageDAO = messageDAO,
                     settingDAO = settingDAO,
-                    channelId = 1
                 )
             }
         }
