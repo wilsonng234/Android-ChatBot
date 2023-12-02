@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,21 +33,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.android_chatbot.R
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
+import com.example.android_chatbot.ui.chattingscreen.ChattingScreen
 import com.example.android_chatbot.ui.components.MenuItemCard
 import kotlinx.coroutines.launch
 
 enum class ChatBotScreen(@StringRes val title: Int) {
     Start(title = R.string.app_name), AllChats(title = R.string.all_chats), SelectBot(title = R.string.select_bot), Settings(
         title = R.string.settings
-    )
+    ),
+    Chat(title = R.string.chat)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,6 +120,10 @@ fun ChatBotApp(
             R.string.settings -> {
                 navHostController.navigate(ChatBotScreen.Settings.name)
             }
+
+            R.string.chat -> {
+                navHostController.navigate(ChatBotScreen.Chat.name + "/1")
+            }
         }
     }
 
@@ -124,6 +133,13 @@ fun ChatBotApp(
     ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
         ModalDrawerSheet {
             Text("Android ChatBot", modifier = Modifier.padding(16.dp))
+            Divider()
+            Button(
+                onClick = { handleMenuItemClicked(R.string.chat) },
+                modifier = Modifier.height(60.dp)
+            ) {
+                Text("Chat Room 1")
+            }
             Divider()
 
             menuItemIds.map { menuItemId ->
@@ -169,6 +185,17 @@ fun ChatBotApp(
                     }
                     composable(route = ChatBotScreen.Settings.name) {
                         Text("Settings Screen")
+                    }
+                    composable(
+                        route = ChatBotScreen.Chat.name + "/{channelId}",
+                        arguments = listOf(navArgument("channelId") { type = NavType.IntType })
+                    ) {
+                        ChattingScreen(
+                            channelDAO = channelDAO,
+                            messageDAO = messageDAO,
+                            settingDAO = settingDAO,
+                            channelId = it.arguments!!.getInt("channelId")
+                        )
                     }
                 }
             }

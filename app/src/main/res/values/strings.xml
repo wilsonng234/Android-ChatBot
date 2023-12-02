@@ -6,5 +6,6 @@
     <string name="settings">Settings</string>
     <string name="drawer_button">Drawer</string>
     <string name="back_button">Back</string>
+    <string name="chat">Chat</string>
 
 </resources>
