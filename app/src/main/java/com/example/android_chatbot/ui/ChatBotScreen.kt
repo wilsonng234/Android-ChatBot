@@ -1,6 +1,9 @@
 package com.example.android_chatbot.ui
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -25,13 +28,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.android_chatbot.R
 import kotlinx.coroutines.launch
 
 enum class ChatBotScreen(@StringRes val title: Int) {
-    Start(title = R.string.app_name), AllChats(title = R.string.all_chats), SelectBot(title = R.string.select_bot), Setting(
+    Start(title = R.string.app_name), AllChats(title = R.string.all_chats), SelectBot(title = R.string.select_bot), Settings(
         title = R.string.settings
     )
 }
@@ -91,7 +96,29 @@ fun ChatBotApp(
         Scaffold(topBar = {
             ChatBotTopAppBar(handleNavigationIconClicked = { handleNavigationIconClicked(it) })
         }) { paddingValues ->
-            // Screen content
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                NavHost(
+                    navController = navHostController, startDestination = ChatBotScreen.Start.name
+                ) {
+                    composable(route = ChatBotScreen.Start.name) {
+                        Text("Start Screen")
+                    }
+                    composable(route = ChatBotScreen.AllChats.name) {
+                        Text("AllChats Screen")
+                    }
+                    composable(route = ChatBotScreen.SelectBot.name) {
+                        Text("SelectBot Screen")
+                    }
+                    composable(route = ChatBotScreen.Settings.name) {
+                        Text("Settings Screen")
+                    }
+                }
+            }
         }
     }
 }
