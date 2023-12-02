@@ -94,8 +94,10 @@ private fun apiKeyInputSection(
                     setExpanded(false)
                 }) {
                     DataSource.services.forEach { service ->
-                        DropdownMenuItem(text = { Text(text = service) },
-                            onClick = { setSelectedOptionText(service) })
+                        DropdownMenuItem(text = { Text(text = service) }, onClick = {
+                            setSelectedOptionText(service)
+                            setExpanded(false)
+                        })
                     }
                 }
             }
