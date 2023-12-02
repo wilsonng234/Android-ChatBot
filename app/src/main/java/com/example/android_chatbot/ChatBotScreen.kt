@@ -42,6 +42,7 @@ import androidx.navigation.navArgument
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
+import com.example.android_chatbot.ui.SettingScreen
 import com.example.android_chatbot.ui.chatscreen.ChatScreen
 import com.example.android_chatbot.ui.components.MenuItemCard
 import kotlinx.coroutines.launch
@@ -189,7 +190,7 @@ fun ChatBotApp(
                         Text("SelectBot Screen")
                     }
                     composable(route = ChatBotScreen.Settings.name) {
-                        Text("Settings Screen")
+                        SettingScreen(settingDAO = settingDAO)
                     }
                     composable(
                         route = ChatBotScreen.Chat.name + "/{channelId}",
