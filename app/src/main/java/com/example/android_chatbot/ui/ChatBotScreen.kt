@@ -109,27 +109,28 @@ fun ChatBotApp(
         }
 
         when (menuItemId) {
-            R.string.all_chats -> {
+            ChatBotScreen.AllChats.title -> {
                 navHostController.navigate(ChatBotScreen.AllChats.name)
             }
 
-            R.string.select_bot -> {
+            ChatBotScreen.SelectBot.title -> {
                 navHostController.navigate(ChatBotScreen.SelectBot.name)
             }
 
-            R.string.settings -> {
+            ChatBotScreen.Settings.title -> {
                 navHostController.navigate(ChatBotScreen.Settings.name)
             }
 
-            R.string.chat -> {
+            ChatBotScreen.Chat.title -> {
                 navHostController.navigate(ChatBotScreen.Chat.name + "/1")
             }
         }
     }
 
     val menuItemIds = listOf(
-        R.string.all_chats, R.string.select_bot, R.string.settings
+        ChatBotScreen.AllChats.title, ChatBotScreen.SelectBot.title, ChatBotScreen.Settings.title
     )
+
     ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
         ModalDrawerSheet {
             Text("Android ChatBot", modifier = Modifier.padding(16.dp))
@@ -145,9 +146,9 @@ fun ChatBotApp(
             menuItemIds.map { menuItemId ->
                 MenuItemCard(
                     icon = when (menuItemId) {
-                        R.string.all_chats -> Icons.Outlined.Face
-                        R.string.select_bot -> Icons.Outlined.Person
-                        R.string.settings -> Icons.Outlined.Settings
+                        ChatBotScreen.AllChats.title -> Icons.Outlined.Face
+                        ChatBotScreen.SelectBot.title -> Icons.Outlined.Person
+                        ChatBotScreen.Settings.title -> Icons.Outlined.Settings
 
                         else -> {
                             throw IllegalStateException("Unknown menu item id: $menuItemId")
