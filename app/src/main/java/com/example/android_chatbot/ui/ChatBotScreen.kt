@@ -98,9 +98,23 @@ fun ChatBotApp(
         }
     }
 
-    fun handleMenuItemClicked() {
+    fun handleMenuItemClicked(menuItemId: Int) {
         scope.launch {
             drawerState.close()
+        }
+
+        when (menuItemId) {
+            R.string.all_chats -> {
+                navHostController.navigate(ChatBotScreen.AllChats.name)
+            }
+
+            R.string.select_bot -> {
+                navHostController.navigate(ChatBotScreen.SelectBot.name)
+            }
+
+            R.string.settings -> {
+                navHostController.navigate(ChatBotScreen.Settings.name)
+            }
         }
     }
 
@@ -124,7 +138,7 @@ fun ChatBotApp(
                         }
                     },
                     content = stringResource(id = menuItemId),
-                    handleMenuItemClicked = { handleMenuItemClicked() },
+                    handleMenuItemClicked = { handleMenuItemClicked(menuItemId) },
                     modifier = Modifier.height(60.dp)
                 )
 
