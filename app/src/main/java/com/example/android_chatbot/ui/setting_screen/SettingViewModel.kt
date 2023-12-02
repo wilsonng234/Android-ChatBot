@@ -1,6 +1,5 @@
 package com.example.android_chatbot.ui.setting_screen
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -17,19 +16,7 @@ class SettingViewModel(private val settingDAO: SettingDAO) : ViewModel() {
             SettingViewModel(settingDAO) as T
     }
 
-    val settings = mutableStateListOf<Setting>()
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            settingDAO.getAll().collect {
-                settings.addAll(it)
-            }
-        }
-    }
-
     fun insertSetting(setting: Setting) {
-        settings.add(setting)
-
         viewModelScope.launch(Dispatchers.IO) {
             settingDAO.insertAll(setting)
         }
