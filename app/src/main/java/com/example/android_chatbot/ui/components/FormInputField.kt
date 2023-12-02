@@ -18,7 +18,7 @@ fun FormInputField(
 ) {
     OutlinedTextField(
         value = value,
-        onValueChange = { onValueChange },
+        onValueChange = onValueChange,
         modifier = modifier,
         label = { Text(label) },
         singleLine = singleLine,
