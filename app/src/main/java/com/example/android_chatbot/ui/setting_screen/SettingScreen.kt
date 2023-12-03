@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -59,13 +60,15 @@ fun SettingScreen(
     val (reset, setReset) = remember { mutableStateOf(false) }
 
     LaunchedEffect(settings) {
-        setServicesOption(listOf("") + DataSource.services - settings.map { it.service })
+        val temp = listOf("") + DataSource.services - settings.map { it.service }
+        setServicesOption(temp.sorted())
         setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
     }
 
     LaunchedEffect(reset) {
         if (reset) {
-            setServicesOption(listOf("") + DataSource.services - settings.map { it.service })
+            val temp = listOf("") + DataSource.services - settings.map { it.service }
+            setServicesOption(temp.sorted())
             setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
             setReset(false)
         }
@@ -90,6 +93,12 @@ fun SettingScreen(
                 }
             }
         }
+    }
+
+    val removeApiKeyInputSection: (ApiKeyInput) -> Unit = {
+        val temp = apiKeyInputFields.map { it }.toMutableList()
+        temp.remove(it)
+        setApiKeyInputFields(temp)
     }
 
     Column(
@@ -119,6 +128,10 @@ fun SettingScreen(
                 },
                 servicesOption = servicesOption,
                 setServicesOption = setServicesOption,
+                removeApiKeyInputSection = {
+                    removeApiKeyInputSection(apiKeyInputField)
+                    setServicesOption(servicesOption.plus(apiKeyInputField.service).sorted())
+                },
                 modifier = modifier
             )
 
@@ -158,6 +171,7 @@ private fun ApiKeyInputSection(
     setApiKey: (String) -> Unit,
     servicesOption: List<String>,
     setServicesOption: (List<String>) -> Unit,
+    removeApiKeyInputSection: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -170,35 +184,43 @@ private fun ApiKeyInputSection(
         Icon(imageVector = Icons.Filled.Lock, contentDescription = null)
 
         Column {
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { setExpanded(!expanded) }) {
-                OutlinedTextField(readOnly = true,
-                    value = selectedOptionText,
-                    onValueChange = { },
-                    label = { Text("Service") },
-                    trailingIcon = {
-                        TrailingIcon(
-                            expanded = expanded
-                        )
-                    },
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                    modifier = modifier.menuAnchor()
-                )
-
-                ExposedDropdownMenu(expanded = expanded, onDismissRequest = {
-                    setExpanded(false)
-                }) {
-                    servicesOption.forEach { serviceOption ->
-                        DropdownMenuItem(text = { Text(text = serviceOption) }, onClick = {
-                            setServicesOption(
-                                servicesOption.plus(selectedOptionText).minus(serviceOption)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { setExpanded(!expanded) }) {
+                    OutlinedTextField(readOnly = true,
+                        value = selectedOptionText,
+                        onValueChange = { },
+                        label = { Text("Service") },
+                        trailingIcon = {
+                            TrailingIcon(
+                                expanded = expanded
                             )
-                            setSelectedOptionText(serviceOption)
-                            setExpanded(false)
-                        })
+                        },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                        modifier = modifier.menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = {
+                        setExpanded(false)
+                    }) {
+                        servicesOption.forEach { serviceOption ->
+                            DropdownMenuItem(text = { Text(text = serviceOption) }, onClick = {
+                                val temp = if (selectedOptionText.isEmpty()) servicesOption.minus(
+                                    serviceOption
+                                ) else servicesOption.plus(selectedOptionText).minus(serviceOption)
+
+                                setServicesOption(temp.sorted())
+                                setSelectedOptionText(serviceOption)
+                                setExpanded(false)
+                            })
+                        }
                     }
                 }
+
+                RemoveApiKeyInputSectionButton(
+                    removeApiKeyInputSection = removeApiKeyInputSection, modifier = modifier
+                )
             }
 
             FormInputField(
@@ -224,6 +246,23 @@ private fun AddApiKeyInputSectionButton(
         Icon(
             imageVector = Icons.Filled.Add,
             contentDescription = stringResource(R.string.add_api_key_input_section)
+        )
+    }
+}
+
+@Composable
+private fun RemoveApiKeyInputSectionButton(
+    removeApiKeyInputSection: () -> Unit, modifier: Modifier = Modifier
+) {
+    ElevatedButton(
+        onClick = { removeApiKeyInputSection() }, colors = ButtonDefaults.elevatedButtonColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.primary
+        ), modifier = modifier.padding(horizontal = 8.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Delete,
+            contentDescription = stringResource(R.string.remove_api_key_input_section)
         )
     }
 }
