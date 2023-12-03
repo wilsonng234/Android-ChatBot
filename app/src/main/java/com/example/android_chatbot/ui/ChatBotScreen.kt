@@ -1,6 +1,5 @@
 package com.example.android_chatbot.ui
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -182,7 +181,8 @@ fun ChatBotApp(
                     navController = navHostController, startDestination = ChatBotScreen.Start.name
                 ) {
                     composable(route = ChatBotScreen.Start.name) {
-                        Text("Start Screen")
+                        StartScreen(channelDAO = channelDAO,
+                            messageDAO = messageDAO)
                     }
                     composable(route = ChatBotScreen.AllChats.name) {
                         Text("AllChats Screen")
