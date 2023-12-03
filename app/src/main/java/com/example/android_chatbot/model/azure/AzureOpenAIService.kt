@@ -40,15 +40,23 @@ object AzureOpenAIService {
      *   The second element is whether the response is successful.
      **/
     suspend fun getChatResponse(messages: List<Message>, model: String): Pair<String, Boolean> {
-        val client = HttpClient(CIO)
-        val responseBody: HttpResponse = client.post {
-            url(endPoint.replace("{model}", model))
-            header("api-key", apiKey)
-            contentType(ContentType.Application.Json)
+        val responseBody: HttpResponse = try {
+            val client = HttpClient(CIO)
+            val responseBody: HttpResponse = client.post {
+                url(endPoint.replace("{model}", model))
+                header("api-key", apiKey)
+                contentType(ContentType.Application.Json)
 
-            setBody("{\"messages\":${messages.joinToString(prefix = "[", postfix = "]")}}")
+                setBody("{\"messages\":${messages.joinToString(prefix = "[", postfix = "]")}}")
+            }
+            client.close()
+
+            responseBody
+        } catch (e: Exception) {
+            Log.e("AzureOpenAIService", "getChatResponse: ${e.message}")
+
+            return Pair("The service is not available now, please try again later.", false)
         }
-        client.close()
 
         return try {
             val responseJson = JSONObject(responseBody.bodyAsText())
