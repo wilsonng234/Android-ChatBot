@@ -30,7 +30,7 @@ fun ChatHistoryCard(
     channelId: Int,
     service: String,
     model: String,
-    title: String,
+    topic: String,
     recentChat: String,
     time: Long?,
     onClick: (Int) -> Unit,
@@ -78,7 +78,7 @@ fun ChatHistoryCard(
                 }
 
                 Text(
-                    text = title,
+                    text = topic,
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = modifier.padding(top = 2.dp, bottom = 3.dp),
@@ -105,7 +105,7 @@ fun ChatHistoryCardPreview() {
         channelId = 0,
         service = "Azure OpenAI",
         model = "gpt-4",
-        title = "title",
+        topic = "title",
         recentChat = "recent chat ...",
         time = 12L,
         onClick = {})
