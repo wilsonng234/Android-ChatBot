@@ -51,7 +51,8 @@ fun SettingScreen(
 ) {
     val viewModel: SettingViewModel = viewModel(factory = SettingViewModel.Factory(settingDAO))
     val settings by settingDAO.getAll().collectAsState(initial = emptyList())
-    val (servicesOption, setServicesOption) = remember { mutableStateOf(DataSource.services) }
+    val services = DataSource.servicesToModels.keys
+    val (servicesOption, setServicesOption) = remember { mutableStateOf(services.toList()) }
     val (apiKeyInputFields, setApiKeyInputFields) = remember {
         mutableStateOf<List<ApiKeyInput>>(
             emptyList()
@@ -60,14 +61,14 @@ fun SettingScreen(
     val (reset, setReset) = remember { mutableStateOf(false) }
 
     LaunchedEffect(settings) {
-        val temp = DataSource.services - settings.map { it.service }
+        val temp = services - settings.map { it.service }.toSet()
         setServicesOption(temp.sorted())
         setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
     }
 
     LaunchedEffect(reset) {
         if (reset) {
-            val temp = DataSource.services - settings.map { it.service }
+            val temp = services - settings.map { it.service }.toSet()
             setServicesOption(temp.sorted())
             setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
             setReset(false)
@@ -138,7 +139,7 @@ fun SettingScreen(
             Divider(modifier = modifier.padding(horizontal = 8.dp, vertical = 32.dp))
         }
 
-        if (apiKeyInputFields.size < DataSource.services.size) {
+        if (apiKeyInputFields.size < services.size) {
             AddApiKeyInputSectionButton(
                 addApiKeyInputSection = {
                     setApiKeyInputFields(apiKeyInputFields.plus(ApiKeyInput()))
