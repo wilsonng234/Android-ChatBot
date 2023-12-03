@@ -139,10 +139,10 @@ fun SettingScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 64.dp, vertical = 32.dp)
         ) {
+            ResetFormButton(handleResetForm = handleResetForm, modifier = modifier.weight(0.2f))
             SubmitFormButton(
                 handleSubmitForm = handleSubmitForm, modifier = modifier.weight(0.2f)
             )
-            ResetFormButton(handleResetForm = handleResetForm, modifier = modifier.weight(0.2f))
         }
     }
 }
@@ -173,8 +173,7 @@ private fun ApiKeyInputSection(
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { setExpanded(!expanded) }) {
-                OutlinedTextField(
-                    readOnly = true,
+                OutlinedTextField(readOnly = true,
                     value = selectedOptionText,
                     onValueChange = { },
                     label = { Text("Service") },
