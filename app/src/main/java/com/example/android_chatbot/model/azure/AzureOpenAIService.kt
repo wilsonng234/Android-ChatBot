@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.setting.SettingDAO
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -27,7 +28,7 @@ object AzureOpenAIService {
         CoroutineScope(Dispatchers.IO).launch {
             apiKey = settingDAO.getSettingByService(service = "Azure OpenAI").apiKey
             endPoint =
-                "https://hkust.azure-api.net/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-05-15"
+                "https://hkust.azure-api.net/openai/deployments/{model}/chat/completions?api-version=2023-05-15"
         }
     }
 
@@ -38,20 +39,27 @@ object AzureOpenAIService {
      *   The first element is the response content.
      *   The second element is whether the response is successful.
      **/
-    suspend fun getChatResponse(messages: List<Message>): Pair<String, Boolean> {
-        val client = HttpClient()
-        val responseBody: HttpResponse = client.post {
-            url(endPoint)
-            header("api-key", apiKey)
-            contentType(ContentType.Application.Json)
+    suspend fun getChatResponse(messages: List<Message>, model: String): Pair<String, Boolean> {
+        val responseBody: HttpResponse = try {
+            val client = HttpClient(CIO)
+            val responseBody: HttpResponse = client.post {
+                url(endPoint.replace("{model}", model))
+                header("api-key", apiKey)
+                contentType(ContentType.Application.Json)
 
-            setBody("{\"messages\":${messages.joinToString(prefix = "[", postfix = "]")}}")
+                setBody("{\"messages\":${messages.joinToString(prefix = "[", postfix = "]")}}")
+            }
+            client.close()
+
+            responseBody
+        } catch (e: Exception) {
+            Log.e("AzureOpenAIService", e.message.toString())
+
+            return Pair("The service is not available now, please try again later.", false)
         }
-        client.close()
 
         return try {
             val responseJson = JSONObject(responseBody.bodyAsText())
-            Log.d("AzureOpenAIService", "getChatResponse: $responseJson")
             val choices = responseJson.getJSONArray("choices") as JSONArray
             val message = choices.getJSONObject(0).get("message") as JSONObject
             val content = message.get("content")
@@ -60,7 +68,7 @@ object AzureOpenAIService {
         } catch (e: Exception) {
             Log.e("AzureOpenAIService", "getChatResponse: ${e.message}")
 
-            Pair("The service is not available now, please try again later.", false)
+            Pair("The service is not available now, please try again later.\n${e.message}", false)
         }
     }
 }

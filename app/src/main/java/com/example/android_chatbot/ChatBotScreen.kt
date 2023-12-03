@@ -3,16 +3,18 @@ package com.example.android_chatbot
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.mediumTopAppBarColors
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -42,9 +45,10 @@ import androidx.navigation.navArgument
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
+import com.example.android_chatbot.ui.StartScreen
 import com.example.android_chatbot.ui.chat_screen.ChatScreen
+import com.example.android_chatbot.ui.components.ChatHistoryCard
 import com.example.android_chatbot.ui.components.MenuItemCard
-import com.example.android_chatbot.ui.select_bot_screen.SelectBotScreen
 import com.example.android_chatbot.ui.setting_screen.SettingScreen
 import kotlinx.coroutines.launch
 
@@ -91,6 +95,16 @@ fun ChatBotApp(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    val channels by channelDAO.getFiveRecentChannels().collectAsState(initial = emptyList())
+
+    fun handleChatCardClicked(Id: Int) {
+        scope.launch {
+            drawerState.close()
+        }
+
+        navHostController.navigate(ChatBotScreen.Chat.name + "/" + Id.toString())
+    }
+
     fun handleNavigationIconClicked(canNavigateBack: Boolean): () -> Unit {
         return if (!canNavigateBack) {
             {
@@ -124,10 +138,6 @@ fun ChatBotApp(
             ChatBotScreen.Settings.title -> {
                 navHostController.navigate(ChatBotScreen.Settings.name)
             }
-
-            ChatBotScreen.Chat.title -> {
-                navHostController.navigate(ChatBotScreen.Chat.name + "/1")
-            }
         }
     }
 
@@ -140,34 +150,64 @@ fun ChatBotApp(
     )
 
     ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
-        ModalDrawerSheet {
-            Text("Android ChatBot", modifier = Modifier.padding(16.dp))
-            Divider()
-            Button(
-                onClick = { handleMenuItemClicked(R.string.chat) },
-                modifier = Modifier.height(60.dp)
+        ModalDrawerSheet(modifier = Modifier.fillMaxHeight()) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
-                Text("Chat Room 1")
-            }
-            Divider()
+                Text("Android ChatBot", modifier = Modifier.padding(16.dp))
+                Divider()
 
-            menuItemIds.map { menuItemId ->
-                MenuItemCard(
-                    icon = when (menuItemId) {
-                        ChatBotScreen.AllChats.title -> Icons.Outlined.Face
-                        ChatBotScreen.SelectBot.title -> Icons.Outlined.Person
-                        ChatBotScreen.Settings.title -> Icons.Outlined.Settings
+                for (channel in channels) {
+                    val messages by messageDAO.getMessagesByChannelId(channel.id)
+                        .collectAsState(initial = emptyList())
+                    val lastMessage = messages.lastOrNull()
+                    val ser = when (channel.service) {
+                        "Azure OpenAI" -> {
+                            R.drawable.azure
+                        }
+
+                        "OpenAI" -> {
+                            R.drawable.openai
+                        }
 
                         else -> {
-                            throw IllegalStateException("Unknown menu item id: $menuItemId")
+                            throw IllegalStateException("Unknown service")
                         }
-                    },
-                    content = stringResource(id = menuItemId),
-                    handleMenuItemClicked = { handleMenuItemClicked(menuItemId) },
-                    modifier = Modifier.height(60.dp)
-                )
+                    }
+
+                    ChatHistoryCard(
+                        iconId = ser,
+                        channelId = channel.id,
+                        service = channel.service,
+                        model = channel.model,
+                        topic = channel.topic,
+                        recentChat = lastMessage?.content ?: "",
+                        time = lastMessage?.createdTime,
+                        onClick = ::handleChatCardClicked,
+                        modifier = Modifier
+                    )
+                }
 
                 Divider()
+
+                menuItemIds.map { menuItemId ->
+                    MenuItemCard(
+                        icon = when (menuItemId) {
+                            ChatBotScreen.AllChats.title -> Icons.Outlined.Face
+                            ChatBotScreen.SelectBot.title -> Icons.Outlined.Person
+                            ChatBotScreen.Settings.title -> Icons.Outlined.Settings
+
+                            else -> {
+                                throw IllegalStateException("Unknown menu item id: $menuItemId")
+                            }
+                        },
+                        content = stringResource(id = menuItemId),
+                        handleMenuItemClicked = { handleMenuItemClicked(menuItemId) },
+                        modifier = Modifier.height(60.dp)
+                    )
+
+                    Divider()
+                }
             }
         }
     }) {
@@ -186,7 +226,11 @@ fun ChatBotApp(
                     navController = navHostController, startDestination = ChatBotScreen.Start.name
                 ) {
                     composable(route = ChatBotScreen.Start.name) {
-                        Text("Start Screen")
+                        StartScreen(
+                            channelDAO = channelDAO,
+                            messageDAO = messageDAO,
+                            onClick = ::handleChatCardClicked
+                        )
                     }
                     composable(route = ChatBotScreen.AllChats.name) {
                         Text("AllChats Screen")
