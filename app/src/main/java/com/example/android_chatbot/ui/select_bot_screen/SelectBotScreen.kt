@@ -1,15 +1,14 @@
 package com.example.android_chatbot.ui.select_bot_screen
 
-import android.util.Log
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.android_chatbot.data.DataSource
+import com.example.android_chatbot.R
 import com.example.android_chatbot.data.DataSource.servicesToModels
 import com.example.android_chatbot.data.channel.Channel
 import com.example.android_chatbot.data.channel.ChannelDAO
@@ -24,13 +23,20 @@ import kotlinx.coroutines.withContext
 fun SelectBotScreen(
     channelDAO: ChannelDAO, handleChatRoomClicked: (Long) -> Unit, modifier: Modifier = Modifier
 ) {
-    LazyColumn(contentPadding = PaddingValues(16.dp)) {
+    LazyColumn() {
         for (entry in servicesToModels.entries.iterator()) {
+            val iconId = if (entry.key == "Azure OpenAI") {
+                R.drawable.azure
+            } else if (entry.key == "OpenAI") {
+                R.drawable.openai
+            } else {
+                throw IllegalStateException("Unknown service")
+            }
             items(entry.value.size) {
                 BotInformationCard(
-                    icon = Icons.Filled.Menu,
+                    iconId = iconId,
                     service = entry.key,
-                    description = entry.value[it],
+                    model = entry.value[it],
                     handleOnClicked = {
                         CoroutineScope(Dispatchers.IO).launch {
                             val channelIds = channelDAO.insertAll(Channel(service = entry.key))
@@ -41,8 +47,9 @@ fun SelectBotScreen(
                             }
                         }
                     },
-                    modifier = modifier.height(150.dp)
+                    modifier = modifier.height(125.dp)
                 )
+                Divider(color = Color.LightGray, modifier = Modifier.padding(horizontal = 8.dp))
             }
         }
     }
