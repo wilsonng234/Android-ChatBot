@@ -21,6 +21,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.android_chatbot.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ChatHistoryCard(
@@ -34,6 +37,13 @@ fun ChatHistoryCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var formattedDate:String = "";
+    if(time != null){
+        val dateFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
+        val date = time?.let { Date(it) }
+        formattedDate = dateFormat.format(date)
+    }
+
     Box(modifier = modifier
         .fillMaxWidth()
         .clickable { onClick() }
@@ -73,7 +83,7 @@ fun ChatHistoryCard(
             }
         }
         Text(
-            text = time.toString(),
+            text = formattedDate,
             modifier = modifier
                 .align(Alignment.TopEnd)
                 .padding(8.dp)
