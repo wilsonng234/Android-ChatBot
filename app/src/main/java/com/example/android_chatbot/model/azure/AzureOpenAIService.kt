@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.setting.SettingDAO
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -39,7 +40,7 @@ object AzureOpenAIService {
      *   The second element is whether the response is successful.
      **/
     suspend fun getChatResponse(messages: List<Message>, model: String): Pair<String, Boolean> {
-        val client = HttpClient()
+        val client = HttpClient(CIO)
         val responseBody: HttpResponse = client.post {
             url(endPoint.replace("{model}", model))
             header("api-key", apiKey)
