@@ -1,5 +1,6 @@
 package com.example.android_chatbot
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -93,10 +94,8 @@ fun ChatBotApp(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val channels by channelDAO.getFive().collectAsState(initial = emptyList())
-
-    fun handleChatCardClicked(Id: Int) {
-        navHostController.navigate(ChatBotScreen.Chat.name + "/" + Id.toString())
+    fun handleChatCardClicked(Id:Int){
+        navHostController.navigate(ChatBotScreen.Chat.name + "/"+ Id.toString())
     }
 
     fun handleNavigationIconClicked(canNavigateBack: Boolean): () -> Unit {
@@ -152,6 +151,36 @@ fun ChatBotApp(
                 modifier = Modifier.height(60.dp)
             ) {
                 Text("Chat Room 1")
+            }
+            Divider()
+            val channels by channelDAO.getFive().collectAsState(initial = emptyList())
+            if(channels.isNotEmpty()){
+                for (channel in channels) {
+                    val messages by messageDAO.getMessagesByChannelId(channel.id)
+                        .collectAsState(initial = emptyList())
+                    val lastMessage = messages.lastOrNull()
+                    var ser = if(channel.service.contains("azure")){
+                        R.drawable.azure
+                    }else if(channel.service.contains("openai")){
+                        R.drawable.openai
+                    }else{
+                        Log.i("service", channel.service)
+                        throw IllegalStateException("Unknown service")
+                    }
+
+
+                    ChatHistoryCard(
+                        iconId = ser,
+                        cnlId = channel.id  ,
+                        service = channel.service,
+                        model = "ChatGPTToDO",
+                        title = "Title",
+                        recentChat = lastMessage?.content ?: "",
+                        time = lastMessage?.createdTime,
+                        onClick = ::handleChatCardClicked,
+                        modifier = Modifier
+                    )
+                }
             }
             Divider()
 
