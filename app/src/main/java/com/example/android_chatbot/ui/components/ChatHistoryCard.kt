@@ -2,6 +2,7 @@ package com.example.android_chatbot.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,13 +29,13 @@ import java.util.Locale
 @Composable
 fun ChatHistoryCard(
     iconId: Int,
-    contentDesc: String? = null,
+    cnlId: Int,
     service: String,
     model: String,
     title: String,
     recentChat: String,
     time: Long?,
-    onClick: () -> Unit,
+    onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var formattedDate:String = "";
@@ -45,15 +46,16 @@ fun ChatHistoryCard(
     }
 
     Box(modifier = modifier
+        .background(color = MaterialTheme.colorScheme.background)
         .fillMaxWidth()
-        .clickable { onClick() }
+        .clickable { onClick(cnlId) }
         .border(BorderStroke(1.dp, Color.Black.copy(alpha = 0.3f)))) {
         Row(
             verticalAlignment = Alignment.CenterVertically, modifier = modifier.fillMaxWidth()
         ) {
             Image(
                 painter = painterResource(id = iconId),
-                contentDescription = contentDesc,
+                contentDescription = iconId.toString(),
                 modifier = modifier
                     .padding(12.dp)
                     .weight(0.2f)
@@ -97,7 +99,7 @@ fun ChatHistoryCard(
 @Composable
 fun ChatHistoryCardPreview() {
     ChatHistoryCard(iconId = R.drawable.azure,
-        contentDesc = null,
+        cnlId= 0,
         service = "Azure OpenAI",
         model = "gpt-4",
         title = "title",
