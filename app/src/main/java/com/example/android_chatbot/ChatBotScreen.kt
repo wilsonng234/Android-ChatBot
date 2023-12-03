@@ -43,9 +43,9 @@ import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.ui.StartScreen
-import com.example.android_chatbot.ui.setting_screen.SettingScreen
 import com.example.android_chatbot.ui.chat_screen.ChatScreen
 import com.example.android_chatbot.ui.components.MenuItemCard
+import com.example.android_chatbot.ui.setting_screen.SettingScreen
 import kotlinx.coroutines.launch
 
 enum class ChatBotScreen(@StringRes val title: Int) {
@@ -182,8 +182,10 @@ fun ChatBotApp(
                     navController = navHostController, startDestination = ChatBotScreen.Start.name
                 ) {
                     composable(route = ChatBotScreen.Start.name) {
-                        StartScreen(channelDAO = channelDAO,
-                            messageDAO = messageDAO)
+                        StartScreen(
+                            channelDAO = channelDAO,
+                            messageDAO = messageDAO
+                        )
                     }
                     composable(route = ChatBotScreen.AllChats.name) {
                         Text("AllChats Screen")
