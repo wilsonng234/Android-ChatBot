@@ -96,6 +96,10 @@ fun ChatBotApp(
     val channels by channelDAO.getFiveRecentChannels().collectAsState(initial = emptyList())
 
     fun handleChatCardClicked(Id: Int) {
+        scope.launch {
+            drawerState.close()
+        }
+
         navHostController.navigate(ChatBotScreen.Chat.name + "/" + Id.toString())
     }
 
@@ -131,10 +135,6 @@ fun ChatBotApp(
 
             ChatBotScreen.Settings.title -> {
                 navHostController.navigate(ChatBotScreen.Settings.name)
-            }
-
-            ChatBotScreen.Chat.title -> {
-                navHostController.navigate(ChatBotScreen.Chat.name + "/1")
             }
         }
     }
