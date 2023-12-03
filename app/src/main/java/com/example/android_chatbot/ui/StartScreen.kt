@@ -1,5 +1,6 @@
 package com.example.android_chatbot.ui
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,36 +15,34 @@ fun StartScreen(
     channelDAO: ChannelDAO, messageDAO: MessageDAO, modifier: Modifier = Modifier
 ) {
     val channels by channelDAO.getAll().collectAsState(initial = emptyList())
-
-    for (channel in channels) {
-        val messages by messageDAO.getMessagesByChannelId(channel.id)
-            .collectAsState(initial = emptyList())
-        val lastMessage = messages.lastOrNull()
-
-        val ser = when (channel.service) {
-            "Azure OpenAI" -> {
-                R.drawable.azure
-            }
-
-            "OpenAI" -> {
-                R.drawable.openai
-            }
-
-            else -> {
+    if(channels.isNotEmpty()){
+        for (channel in channels) {
+            val messages by messageDAO.getMessagesByChannelId(channel.id)
+                .collectAsState(initial = emptyList())
+            val lastMessage = messages.lastOrNull()
+            var ser:Int= 0;
+            if(channel.service.contains("azure")){
+                ser = R.drawable.azure
+            }else if(channel.service.contains("openai")){
+                ser = R.drawable.openai
+            }else{
+                Log.i("service", channel.service)
                 throw IllegalStateException("Unknown service")
             }
-        }
 
-        ChatHistoryCard(
-            iconId = ser,
-            contentDesc = channel.service,
-            service = channel.service,
-            model = "",
-            title = " ",
-            recentChat = lastMessage?.content ?: "",
-            time = lastMessage?.createdTime.toString(),
-            onClick = {},
-            modifier = modifier
-        )
+
+            ChatHistoryCard(
+                iconId = ser,
+                contentDesc = channel.service,
+                service = channel.service,
+                model = "",
+                title = " ",
+                recentChat = lastMessage?.content ?: "",
+                time = lastMessage?.createdTime,
+                onClick = {},
+                modifier = modifier
+            )
+        }
     }
+
 }
