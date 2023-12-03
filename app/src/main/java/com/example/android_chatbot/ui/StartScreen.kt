@@ -23,9 +23,11 @@ fun StartScreen(
             "Azure OpenAI" -> {
                 R.drawable.azure
             }
+
             "OpenAI" -> {
                 R.drawable.openai
             }
+
             else -> {
                 throw IllegalStateException("Unknown service")
             }

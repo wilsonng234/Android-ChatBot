@@ -23,24 +23,50 @@ import androidx.compose.ui.unit.dp
 import com.example.android_chatbot.R
 
 @Composable
-fun ChatHistoryCard(iconId:Int, contentDesc:String? = null,
-                    service:String, model:String,
-                    title:String, recentChat:String,
-                    time:String, onClick:()->Unit){
-    Box(modifier = Modifier.fillMaxWidth().clickable { onClick }.border(BorderStroke(1.dp, Color.Black.copy(alpha = 0.3f)))) {
+fun ChatHistoryCard(
+    iconId: Int,
+    contentDesc: String? = null,
+    service: String,
+    model: String,
+    title: String,
+    recentChat: String,
+    time: String,
+    onClick: () -> Unit
+) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .clickable { onClick }
+        .border(BorderStroke(1.dp, Color.Black.copy(alpha = 0.3f)))) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()
         ) {
             Image(
                 painter = painterResource(id = iconId),
-                contentDescription = contentDesc, modifier = Modifier.padding(12.dp).weight(0.2f)
+                contentDescription = contentDesc,
+                modifier = Modifier
+                    .padding(12.dp)
+                    .weight(0.2f)
             )
-            Column(modifier = Modifier.padding(8.dp).weight(0.8f)) {
-                Text(text = "$service $model",style = MaterialTheme.typography.titleMedium,color = Color.Black.copy(alpha = 0.5f))
-                Text(text = title,style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 2.dp, bottom = 3.dp))
-                Text(text = recentChat,style = MaterialTheme.typography.bodyMedium, color = Color.Black.copy(alpha = 0.5f))
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .weight(0.8f)
+            ) {
+                Text(
+                    text = "$service $model",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.Black.copy(alpha = 0.5f)
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(top = 2.dp, bottom = 3.dp)
+                )
+                Text(
+                    text = recentChat,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black.copy(alpha = 0.5f)
+                )
             }
         }
         Text(
@@ -56,6 +82,14 @@ fun ChatHistoryCard(iconId:Int, contentDesc:String? = null,
 
 @Preview
 @Composable
-fun ChatHistoryCardPreview(){
-    ChatHistoryCard(R.drawable.azure,null, "Azure OpenAI", "ChatGPT-4", "HKUST", "HKUST is a school that...", "12:00") {}
+fun ChatHistoryCardPreview() {
+    ChatHistoryCard(
+        R.drawable.azure,
+        null,
+        "Azure OpenAI",
+        "ChatGPT-4",
+        "HKUST",
+        "HKUST is a school that...",
+        "12:00"
+    ) {}
 }
