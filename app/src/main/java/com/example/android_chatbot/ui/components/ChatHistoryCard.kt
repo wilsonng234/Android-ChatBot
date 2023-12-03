@@ -38,8 +38,8 @@ fun ChatHistoryCard(
     onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var formattedDate:String = "";
-    if(time != null){
+    var formattedDate = "";
+    if (time != null) {
         val dateFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
         val date = time?.let { Date(it) }
         formattedDate = dateFormat.format(date)
@@ -99,7 +99,7 @@ fun ChatHistoryCard(
 @Composable
 fun ChatHistoryCardPreview() {
     ChatHistoryCard(iconId = R.drawable.azure,
-        cnlId= 0,
+        cnlId = 0,
         service = "Azure OpenAI",
         model = "gpt-4",
         title = "title",
