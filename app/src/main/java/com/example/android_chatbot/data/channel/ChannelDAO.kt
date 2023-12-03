@@ -11,7 +11,7 @@ interface ChannelDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(vararg channels: Channel)
 
-    @Query("SELECT id, service FROM channel NATURAL JOIN message cm ORDER BY cm.created_time ASC LIMIT 5")
+    @Query("SELECT id, service, model, topic FROM channel NATURAL JOIN message cm ORDER BY cm.created_time ASC LIMIT 5")
     fun getFive(): Flow<List<Channel>>
 
     @Query("SELECT * FROM channel")
