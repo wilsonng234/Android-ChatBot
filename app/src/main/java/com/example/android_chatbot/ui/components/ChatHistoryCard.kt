@@ -57,5 +57,5 @@ fun ChatHistoryCard(iconId:Int, contentDesc:String? = null,
 @Preview
 @Composable
 fun ChatHistoryCardPreview(){
-    ChatHistoryCard(R.drawable.chatgpt,null, "OpenAI", "ChatGPT-4", "HKUST", "HKUST is a school that...", "12:00") {}
+    ChatHistoryCard(R.drawable.azure,null, "OpenAI", "ChatGPT-4", "HKUST", "HKUST is a school that...", "12:00") {}
 }
