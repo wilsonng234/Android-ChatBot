@@ -27,13 +27,13 @@ import java.util.Locale
 @Composable
 fun ChatHistoryCard(
     iconId: Int,
-    channelId: Int,
+    channelId: Long,
     service: String,
     model: String,
     topic: String,
     recentChat: String,
     time: Long?,
-    onClick: (Int) -> Unit,
+    onClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var formattedDate = "";

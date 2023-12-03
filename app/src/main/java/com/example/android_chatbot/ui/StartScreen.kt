@@ -12,7 +12,7 @@ import com.example.android_chatbot.ui.components.ChatHistoryCard
 @Composable
 fun StartScreen(
     channelDAO: ChannelDAO, messageDAO: MessageDAO,
-    onClick: (Int) -> Unit, modifier: Modifier = Modifier
+    onClick: (Long) -> Unit, modifier: Modifier = Modifier
 ) {
     val channels by channelDAO.getAll().collectAsState(initial = emptyList())
     if (channels.isNotEmpty()) {

@@ -39,7 +39,11 @@ fun SelectBotScreen(
                     model = entry.value[it],
                     handleOnClicked = {
                         CoroutineScope(Dispatchers.IO).launch {
-                            val channelIds = channelDAO.insertAll(Channel(service = entry.key))
+                            val channelIds = channelDAO.insertAll(
+                                Channel(
+                                    service = entry.key, model = entry.value[it]
+                                )
+                            )
                             val channelId = channelIds[0]
 
                             withContext(Dispatchers.Main) {
