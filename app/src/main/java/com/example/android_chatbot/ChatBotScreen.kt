@@ -181,7 +181,8 @@ fun ChatBotApp(
                     navController = navHostController, startDestination = ChatBotScreen.Start.name
                 ) {
                     composable(route = ChatBotScreen.Start.name) {
-                        Text("Start Screen")
+                        StartScreen(channelDAO = channelDAO,
+                            messageDAO = messageDAO)
                     }
                     composable(route = ChatBotScreen.AllChats.name) {
                         Text("AllChats Screen")
