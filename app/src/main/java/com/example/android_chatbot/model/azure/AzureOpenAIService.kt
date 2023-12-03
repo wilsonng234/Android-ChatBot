@@ -53,14 +53,13 @@ object AzureOpenAIService {
 
             responseBody
         } catch (e: Exception) {
-            Log.e("AzureOpenAIService", "getChatResponse: ${e.message}")
+            Log.e("AzureOpenAIService", e.message.toString())
 
             return Pair("The service is not available now, please try again later.", false)
         }
 
         return try {
             val responseJson = JSONObject(responseBody.bodyAsText())
-            Log.d("AzureOpenAIService", "getChatResponse: $responseJson")
             val choices = responseJson.getJSONArray("choices") as JSONArray
             val message = choices.getJSONObject(0).get("message") as JSONObject
             val content = message.get("content")
@@ -69,7 +68,7 @@ object AzureOpenAIService {
         } catch (e: Exception) {
             Log.e("AzureOpenAIService", "getChatResponse: ${e.message}")
 
-            Pair("The service is not available now, please try again later.", false)
+            Pair("The service is not available now, please try again later.\n${e.message}", false)
         }
     }
 }
