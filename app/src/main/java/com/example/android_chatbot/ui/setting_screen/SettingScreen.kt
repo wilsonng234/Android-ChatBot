@@ -97,8 +97,19 @@ fun SettingScreen(
         if (numApiKeyInputSection < DataSource.services.size) {
             AddApiKeyInputSectionButton(
                 numApiKeyInputSection = numApiKeyInputSection,
-                setNumApiKeyInputSection = setNumApiKeyInputSection
+                setNumApiKeyInputSection = setNumApiKeyInputSection,
+                modifier = modifier
             )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 64.dp, vertical = 32.dp)
+        ) {
+            SubmitFormButton(modifier = modifier.weight(0.2f))
+            ResetFormButton(modifier = modifier.weight(0.2f))
         }
     }
 }
@@ -184,5 +195,29 @@ private fun AddApiKeyInputSectionButton(
             imageVector = Icons.Filled.Add,
             contentDescription = stringResource(R.string.add_api_key_input_section)
         )
+    }
+}
+
+@Composable
+private fun SubmitFormButton(modifier: Modifier = Modifier) {
+    ElevatedButton(
+        onClick = { }, colors = ButtonDefaults.elevatedButtonColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.primary
+        ), modifier = modifier.padding(horizontal = 8.dp)
+    ) {
+        Text(text = stringResource(R.string.submit))
+    }
+}
+
+@Composable
+private fun ResetFormButton(modifier: Modifier = Modifier) {
+    ElevatedButton(
+        onClick = { }, colors = ButtonDefaults.elevatedButtonColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.primary
+        ), modifier = modifier.padding(horizontal = 8.dp)
+    ) {
+        Text(text = stringResource(R.string.reset))
     }
 }
