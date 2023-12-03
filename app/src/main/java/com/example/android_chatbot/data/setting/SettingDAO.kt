@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SettingDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertAll(vararg setting: Setting)
+    fun insertAll(vararg setting: Setting): List<Long>
 
     @Query("SELECT * FROM setting")
     fun getAll(): Flow<List<Setting>>

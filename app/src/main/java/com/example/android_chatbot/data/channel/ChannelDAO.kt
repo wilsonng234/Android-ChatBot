@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ChannelDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertAll(vararg channels: Channel)
+    fun insertAll(vararg channels: Channel): List<Long>
 
     @Query("SELECT * FROM channel")
     fun getAll(): Flow<List<Channel>>
