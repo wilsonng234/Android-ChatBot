@@ -30,7 +30,7 @@ fun ChatHistoryCard(
     model: String,
     title: String,
     recentChat: String,
-    time: String,
+    time: Long?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -73,7 +73,7 @@ fun ChatHistoryCard(
             }
         }
         Text(
-            text = time,
+            text = time.toString(),
             modifier = modifier
                 .align(Alignment.TopEnd)
                 .padding(8.dp)
@@ -92,6 +92,6 @@ fun ChatHistoryCardPreview() {
         model = "gpt-4",
         title = "title",
         recentChat = "recent chat ...",
-        time = "time",
+        time = 12L,
         onClick = {})
 }
