@@ -59,13 +59,13 @@ fun SettingScreen(
     val (reset, setReset) = remember { mutableStateOf(false) }
 
     LaunchedEffect(settings) {
-        setServicesOption(DataSource.services - settings.map { it.service }.toSet())
+        setServicesOption(listOf("") + DataSource.services - settings.map { it.service })
         setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
     }
 
     LaunchedEffect(reset) {
         if (reset) {
-            setServicesOption(DataSource.services - settings.map { it.service }.toSet())
+            setServicesOption(listOf("") + DataSource.services - settings.map { it.service })
             setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
             setReset(false)
         }
@@ -171,7 +171,8 @@ private fun ApiKeyInputSection(
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { setExpanded(!expanded) }) {
-                OutlinedTextField(readOnly = true,
+                OutlinedTextField(
+                    readOnly = true,
                     value = selectedOptionText,
                     onValueChange = { },
                     label = { Text("Service") },
