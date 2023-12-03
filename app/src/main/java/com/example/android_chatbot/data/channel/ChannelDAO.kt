@@ -16,4 +16,7 @@ interface ChannelDAO {
 
     @Query("SELECT * FROM channel where id = :id")
     fun getChannelById(id: Int): Channel
+
+    @Query("UPDATE channel SET topic = :topic WHERE id = :id")
+    fun updateChannelTopic(topic: String, id: Int)
 }
