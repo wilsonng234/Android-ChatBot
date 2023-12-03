@@ -1,13 +1,16 @@
 package com.example.android_chatbot.ui.setting_screen
 
-import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,17 +24,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.android_chatbot.R
 import com.example.android_chatbot.data.DataSource
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.ui.components.FormInputField
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
     settingDAO: SettingDAO, modifier: Modifier = Modifier
@@ -39,9 +45,11 @@ fun SettingScreen(
     val viewModel: SettingViewModel = viewModel(factory = SettingViewModel.Factory(settingDAO))
     val settings by settingDAO.getAll().collectAsState(initial = emptyList())
     val (servicesOption, setServicesOption) = remember { mutableStateOf(DataSource.services) }
-    
+    val (numApiKeyInputSection, setNumApiKeyInputSection) = remember { mutableIntStateOf(0) }
+
     LaunchedEffect(settings) {
         setServicesOption(DataSource.services - settings.map { it.service }.toSet())
+        setNumApiKeyInputSection(numApiKeyInputSection + settings.size)
     }
 
     Column(
@@ -61,10 +69,48 @@ fun SettingScreen(
                 setApiKey = setApiKey,
                 servicesOption = servicesOption,
                 setServicesOption = setServicesOption,
+                numApiKeyInputSection = numApiKeyInputSection,
+                setNumApiKeyInputSection = setNumApiKeyInputSection,
                 modifier = modifier
             )
 
             Divider(modifier = modifier.padding(horizontal = 8.dp, vertical = 32.dp))
+        }
+
+        for (i in 1..numApiKeyInputSection - settings.size) {
+            val (expanded, setExpanded) = remember { mutableStateOf(false) }
+            val (selectedOptionText, setSelectedOptionText) = remember { mutableStateOf("") }
+            val (apiKey, setApiKey) = remember { mutableStateOf("") }
+
+            apiKeyInputSection(
+                expanded = expanded,
+                setExpanded = setExpanded,
+                selectedOptionText = selectedOptionText,
+                setSelectedOptionText = setSelectedOptionText,
+                apiKey = apiKey,
+                setApiKey = setApiKey,
+                servicesOption = servicesOption,
+                setServicesOption = setServicesOption,
+                numApiKeyInputSection = numApiKeyInputSection,
+                setNumApiKeyInputSection = setNumApiKeyInputSection,
+                modifier = modifier
+            )
+
+            Divider(modifier = modifier.padding(horizontal = 8.dp, vertical = 32.dp))
+        }
+
+        if (numApiKeyInputSection < DataSource.services.size) {
+            Button(
+                onClick = { setNumApiKeyInputSection(numApiKeyInputSection + 1) },
+                border = BorderStroke(1.dp, Color.White),
+                shape = RoundedCornerShape(100),
+                modifier = modifier.padding(horizontal = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(R.string.add_api_key_input_section)
+                )
+            }
         }
     }
 }
@@ -80,6 +126,8 @@ private fun apiKeyInputSection(
     setApiKey: (String) -> Unit,
     servicesOption: List<String>,
     setServicesOption: (List<String>) -> Unit,
+    numApiKeyInputSection: Int,
+    setNumApiKeyInputSection: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(

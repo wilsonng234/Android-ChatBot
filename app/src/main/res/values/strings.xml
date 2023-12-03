@@ -7,5 +7,6 @@
     <string name="drawer_button">Drawer</string>
     <string name="back_button">Back</string>
     <string name="chat">Chat</string>
+    <string name="add_api_key_input_section">Add API key input section</string>
 
 </resources>
