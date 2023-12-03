@@ -185,8 +185,7 @@ private fun ApiKeyInputSection(
 
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
+                ExposedDropdownMenuBox(expanded = expanded,
                     onExpandedChange = { setExpanded(!expanded) }) {
                     OutlinedTextField(readOnly = true,
                         value = selectedOptionText,
@@ -239,8 +238,8 @@ private fun AddApiKeyInputSectionButton(
 ) {
     ElevatedButton(
         onClick = { addApiKeyInputSection() }, colors = ButtonDefaults.elevatedButtonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.secondary
         ), modifier = modifier.padding(horizontal = 8.dp)
     ) {
         Icon(
@@ -256,8 +255,8 @@ private fun RemoveApiKeyInputSectionButton(
 ) {
     ElevatedButton(
         onClick = { removeApiKeyInputSection() }, colors = ButtonDefaults.elevatedButtonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.secondary
         ), modifier = modifier.padding(horizontal = 8.dp)
     ) {
         Icon(
@@ -273,8 +272,8 @@ private fun SubmitFormButton(
 ) {
     ElevatedButton(
         onClick = { handleSubmitForm() }, colors = ButtonDefaults.elevatedButtonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.tertiary
         ), modifier = modifier.padding(horizontal = 8.dp)
     ) {
         Text(text = stringResource(R.string.submit))
@@ -287,8 +286,8 @@ private fun ResetFormButton(
 ) {
     ElevatedButton(
         onClick = { handleResetForm() }, colors = ButtonDefaults.elevatedButtonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.tertiary
         ), modifier = modifier.padding(horizontal = 8.dp)
     ) {
         Text(text = stringResource(R.string.reset))
