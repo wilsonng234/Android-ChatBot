@@ -1,6 +1,5 @@
 package com.example.android_chatbot.ui.setting_screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,6 +36,10 @@ import com.example.android_chatbot.data.DataSource
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.ui.components.FormInputField
 
+data class ApiKeyInput(
+    val service: String = "", val apiKey: String = ""
+)
+
 @Composable
 fun SettingScreen(
     settingDAO: SettingDAO, modifier: Modifier = Modifier
@@ -45,28 +47,22 @@ fun SettingScreen(
     val viewModel: SettingViewModel = viewModel(factory = SettingViewModel.Factory(settingDAO))
     val settings by settingDAO.getAll().collectAsState(initial = emptyList())
     val (servicesOption, setServicesOption) = remember { mutableStateOf(DataSource.services) }
-    val (selectedOptionTexts, setSelectedOptionTexts) = remember {
-        mutableStateOf<List<String>>(
+    val (apiKeyInputFields, setApiKeyInputFields) = remember {
+        mutableStateOf<List<ApiKeyInput>>(
             emptyList()
         )
     }
-    val (apiKeys, setApiKeys) = remember { mutableStateOf<List<String>>(emptyList()) }
-    val (numApiKeyInputSection, setNumApiKeyInputSection) = remember { mutableIntStateOf(0) }
     val (reset, setReset) = remember { mutableStateOf(false) }
 
     LaunchedEffect(settings) {
         setServicesOption(DataSource.services - settings.map { it.service }.toSet())
-        setNumApiKeyInputSection(numApiKeyInputSection + settings.size)
-        setSelectedOptionTexts(settings.map { it.service })
-        setApiKeys(settings.map { it.apiKey })
+        setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
     }
 
     LaunchedEffect(reset) {
         if (reset) {
             setServicesOption(DataSource.services - settings.map { it.service }.toSet())
-            setNumApiKeyInputSection(settings.size)
-            setSelectedOptionTexts(settings.map { it.service })
-            setApiKeys(settings.map { it.apiKey })
+            setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
             setReset(false)
         }
     }
@@ -74,18 +70,16 @@ fun SettingScreen(
     Column(
         modifier = modifier.padding(vertical = 8.dp)
     ) {
-        for (i in 0 until minOf(selectedOptionTexts.size, apiKeys.size)) {
+        for (apiKeyInputField in apiKeyInputFields) {
             val (expanded, setExpanded) = remember { mutableStateOf(false) }
             val (selectedOptionText, setSelectedOptionText) = remember {
-                mutableStateOf(
-                    selectedOptionTexts[i]
-                )
+                mutableStateOf(apiKeyInputField.service)
             }
-            val (apiKey, setApiKey) = remember { mutableStateOf(apiKeys[i]) }
+            val (apiKey, setApiKey) = remember { mutableStateOf(apiKeyInputField.apiKey) }
 
             LaunchedEffect(reset) {
-                setSelectedOptionText(selectedOptionTexts[i])
-                setApiKey(apiKeys[i])
+                setSelectedOptionText(apiKeyInputField.service)
+                setApiKey(apiKeyInputField.apiKey)
             }
 
             ApiKeyInputSection(
@@ -103,31 +97,11 @@ fun SettingScreen(
             Divider(modifier = modifier.padding(horizontal = 8.dp, vertical = 32.dp))
         }
 
-        for (i in 1..numApiKeyInputSection - settings.size) {
-            val (expanded, setExpanded) = remember { mutableStateOf(false) }
-            val (selectedOptionText, setSelectedOptionText) = remember { mutableStateOf("") }
-            val (apiKey, setApiKey) = remember { mutableStateOf("") }
-
-            ApiKeyInputSection(
-                expanded = expanded,
-                setExpanded = setExpanded,
-                selectedOptionText = selectedOptionText,
-                setSelectedOptionText = setSelectedOptionText,
-                apiKey = apiKey,
-                setApiKey = setApiKey,
-                servicesOption = servicesOption,
-                setServicesOption = setServicesOption,
-                modifier = modifier
-            )
-
-            Divider(modifier = modifier.padding(horizontal = 8.dp, vertical = 32.dp))
-        }
-
-        if (numApiKeyInputSection < DataSource.services.size) {
+        if (apiKeyInputFields.size < DataSource.services.size) {
             AddApiKeyInputSectionButton(
-                numApiKeyInputSection = numApiKeyInputSection,
-                setNumApiKeyInputSection = setNumApiKeyInputSection,
-                modifier = modifier
+                addApiKeyInputSection = {
+                    setApiKeyInputFields(apiKeyInputFields.plus(ApiKeyInput()))
+                }, modifier = modifier
             )
         }
 
@@ -166,8 +140,7 @@ private fun ApiKeyInputSection(
         Icon(imageVector = Icons.Filled.Lock, contentDescription = null)
 
         Column {
-            ExposedDropdownMenuBox(
-                expanded = expanded,
+            ExposedDropdownMenuBox(expanded = expanded,
                 onExpandedChange = { setExpanded(!expanded) }) {
                 OutlinedTextField(readOnly = true,
                     value = selectedOptionText,
@@ -209,17 +182,13 @@ private fun ApiKeyInputSection(
 
 @Composable
 private fun AddApiKeyInputSectionButton(
-    numApiKeyInputSection: Int,
-    setNumApiKeyInputSection: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    addApiKeyInputSection: () -> Unit, modifier: Modifier = Modifier
 ) {
     ElevatedButton(
-        onClick = { setNumApiKeyInputSection(numApiKeyInputSection + 1) },
-        colors = ButtonDefaults.elevatedButtonColors(
+        onClick = { addApiKeyInputSection() }, colors = ButtonDefaults.elevatedButtonColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.primary
-        ),
-        modifier = modifier.padding(horizontal = 8.dp)
+        ), modifier = modifier.padding(horizontal = 8.dp)
     ) {
         Icon(
             imageVector = Icons.Filled.Add,
