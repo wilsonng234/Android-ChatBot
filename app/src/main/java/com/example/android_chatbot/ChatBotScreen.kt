@@ -42,6 +42,7 @@ import androidx.navigation.navArgument
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
+import com.example.android_chatbot.ui.StartScreen
 import com.example.android_chatbot.ui.setting_screen.SettingScreen
 import com.example.android_chatbot.ui.chat_screen.ChatScreen
 import com.example.android_chatbot.ui.components.MenuItemCard
