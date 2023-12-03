@@ -16,4 +16,7 @@ interface SettingDAO {
 
     @Query("SELECT * FROM setting WHERE service = :service")
     fun getSettingByService(service: String): Setting
+
+    @Query("DELETE FROM setting")
+    fun deleteAll()
 }
