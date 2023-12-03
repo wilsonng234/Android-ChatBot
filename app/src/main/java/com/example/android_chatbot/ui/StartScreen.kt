@@ -1,6 +1,5 @@
 package com.example.android_chatbot.ui
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -13,27 +12,31 @@ import com.example.android_chatbot.ui.components.ChatHistoryCard
 @Composable
 fun StartScreen(
     channelDAO: ChannelDAO, messageDAO: MessageDAO,
-    onClick: (Int)->Unit,modifier: Modifier = Modifier
+    onClick: (Int) -> Unit, modifier: Modifier = Modifier
 ) {
     val channels by channelDAO.getAll().collectAsState(initial = emptyList())
-    if(channels.isNotEmpty()){
+    if (channels.isNotEmpty()) {
         for (channel in channels) {
             val messages by messageDAO.getMessagesByChannelId(channel.id)
                 .collectAsState(initial = emptyList())
             val lastMessage = messages.lastOrNull()
-            var ser = if(channel.service.contains("azure")){
-                R.drawable.azure
-            }else if(channel.service.contains("openai")){
-                R.drawable.openai
-            }else{
-                Log.i("service", channel.service)
-                throw IllegalStateException("Unknown service")
-            }
+            val ser = when (channel.service) {
+                "Azure OpenAI" -> {
+                    R.drawable.azure
+                }
 
+                "OpenAI" -> {
+                    R.drawable.openai
+                }
+
+                else -> {
+                    throw IllegalStateException("Unknown service")
+                }
+            }
 
             ChatHistoryCard(
                 iconId = ser,
-                cnlId = channel.id  ,
+                cnlId = channel.id,
                 service = channel.service,
                 model = "ChatGPTToDO",
                 title = "Title",
