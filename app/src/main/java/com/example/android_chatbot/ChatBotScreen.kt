@@ -147,13 +147,6 @@ fun ChatBotApp(
         ModalDrawerSheet {
             Text("Android ChatBot", modifier = Modifier.padding(16.dp))
             Divider()
-            Button(
-                onClick = { handleMenuItemClicked(R.string.chat) },
-                modifier = Modifier.height(60.dp)
-            ) {
-                Text("Chat Room 1")
-            }
-            Divider()
 
             for (channel in channels) {
                 val messages by messageDAO.getMessagesByChannelId(channel.id)
