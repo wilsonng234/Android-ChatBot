@@ -1,5 +1,6 @@
 package com.example.android_chatbot.ui.setting_screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,18 +45,28 @@ fun SettingScreen(
     val viewModel: SettingViewModel = viewModel(factory = SettingViewModel.Factory(settingDAO))
     val settings by settingDAO.getAll().collectAsState(initial = emptyList())
     val (servicesOption, setServicesOption) = remember { mutableStateOf(DataSource.services) }
+    val (selectedOptionTexts, setSelectedOptionTexts) = remember {
+        mutableStateOf<List<String>>(
+            emptyList()
+        )
+    }
+    val (apiKeys, setApiKeys) = remember { mutableStateOf<List<String>>(emptyList()) }
     val (numApiKeyInputSection, setNumApiKeyInputSection) = remember { mutableIntStateOf(0) }
     val (reset, setReset) = remember { mutableStateOf(false) }
 
     LaunchedEffect(settings) {
         setServicesOption(DataSource.services - settings.map { it.service }.toSet())
         setNumApiKeyInputSection(numApiKeyInputSection + settings.size)
+        setSelectedOptionTexts(settings.map { it.service })
+        setApiKeys(settings.map { it.apiKey })
     }
 
     LaunchedEffect(reset) {
         if (reset) {
             setServicesOption(DataSource.services - settings.map { it.service }.toSet())
             setNumApiKeyInputSection(settings.size)
+            setSelectedOptionTexts(settings.map { it.service })
+            setApiKeys(settings.map { it.apiKey })
             setReset(false)
         }
     }
@@ -63,14 +74,18 @@ fun SettingScreen(
     Column(
         modifier = modifier.padding(vertical = 8.dp)
     ) {
-        for (setting in settings) {
+        for (i in 0 until minOf(selectedOptionTexts.size, apiKeys.size)) {
             val (expanded, setExpanded) = remember { mutableStateOf(false) }
-            val (selectedOptionText, setSelectedOptionText) = remember { mutableStateOf(setting.service) }
-            val (apiKey, setApiKey) = remember { mutableStateOf(setting.apiKey) }
+            val (selectedOptionText, setSelectedOptionText) = remember {
+                mutableStateOf(
+                    selectedOptionTexts[i]
+                )
+            }
+            val (apiKey, setApiKey) = remember { mutableStateOf(apiKeys[i]) }
 
-            LaunchedEffect(key1 = reset) {
-                setSelectedOptionText(setting.service)
-                setApiKey(setting.apiKey)
+            LaunchedEffect(reset) {
+                setSelectedOptionText(selectedOptionTexts[i])
+                setApiKey(apiKeys[i])
             }
 
             ApiKeyInputSection(
@@ -151,7 +166,8 @@ private fun ApiKeyInputSection(
         Icon(imageVector = Icons.Filled.Lock, contentDescription = null)
 
         Column {
-            ExposedDropdownMenuBox(expanded = expanded,
+            ExposedDropdownMenuBox(
+                expanded = expanded,
                 onExpandedChange = { setExpanded(!expanded) }) {
                 OutlinedTextField(readOnly = true,
                     value = selectedOptionText,
@@ -213,7 +229,9 @@ private fun AddApiKeyInputSectionButton(
 }
 
 @Composable
-private fun SubmitFormButton(modifier: Modifier = Modifier) {
+private fun SubmitFormButton(
+    modifier: Modifier = Modifier
+) {
     ElevatedButton(
         onClick = { }, colors = ButtonDefaults.elevatedButtonColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
