@@ -77,6 +77,8 @@ fun SettingScreen(
 
     val handleSubmitForm: () -> Unit = {
         CoroutineScope(Dispatchers.IO).launch {
+            settingDAO.deleteAll()
+
             for (apiKeyInputField in apiKeyInputFields) {
                 val service = apiKeyInputField.service
                 val apiKey = apiKeyInputField.apiKey
