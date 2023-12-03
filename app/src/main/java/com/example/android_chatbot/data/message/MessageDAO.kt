@@ -15,5 +15,5 @@ interface MessageDAO {
     fun getAll(): Flow<List<Message>>
 
     @Query("SELECT * FROM message where channel_id = :channelId order by created_time asc")
-    fun getMessagesByChannelId(channelId: Int): Flow<List<Message>>
+    fun getMessagesByChannelId(channelId: Long): Flow<List<Message>>
 }

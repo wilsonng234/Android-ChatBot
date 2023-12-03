@@ -42,9 +42,10 @@ import androidx.navigation.navArgument
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
-import com.example.android_chatbot.ui.setting_screen.SettingScreen
 import com.example.android_chatbot.ui.chat_screen.ChatScreen
 import com.example.android_chatbot.ui.components.MenuItemCard
+import com.example.android_chatbot.ui.select_bot_screen.SelectBotScreen
+import com.example.android_chatbot.ui.setting_screen.SettingScreen
 import kotlinx.coroutines.launch
 
 enum class ChatBotScreen(@StringRes val title: Int) {
@@ -130,6 +131,10 @@ fun ChatBotApp(
         }
     }
 
+    fun handleChatRoomClicked(channelId: Long) {
+        navHostController.navigate(ChatBotScreen.Chat.name + "/$channelId")
+    }
+
     val menuItemIds = listOf(
         ChatBotScreen.AllChats.title, ChatBotScreen.SelectBot.title, ChatBotScreen.Settings.title
     )
@@ -187,20 +192,23 @@ fun ChatBotApp(
                         Text("AllChats Screen")
                     }
                     composable(route = ChatBotScreen.SelectBot.name) {
-                        Text("SelectBot Screen")
+                        SelectBotScreen(channelDAO = channelDAO,
+                            handleChatRoomClicked = {
+                                handleChatRoomClicked(it)
+                            })
                     }
                     composable(route = ChatBotScreen.Settings.name) {
                         SettingScreen(settingDAO = settingDAO)
                     }
                     composable(
                         route = ChatBotScreen.Chat.name + "/{channelId}",
-                        arguments = listOf(navArgument("channelId") { type = NavType.IntType })
+                        arguments = listOf(navArgument("channelId") { type = NavType.LongType })
                     ) {
                         ChatScreen(
                             channelDAO = channelDAO,
                             messageDAO = messageDAO,
                             settingDAO = settingDAO,
-                            channelId = it.arguments!!.getInt("channelId")
+                            channelId = it.arguments!!.getLong("channelId")
                         )
                     }
                 }

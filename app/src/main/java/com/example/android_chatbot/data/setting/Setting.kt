@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "setting", indices = [Index(value = ["service"], unique = true)])
 data class Setting(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
 
     @ColumnInfo(name = "service") val service: String,
 
