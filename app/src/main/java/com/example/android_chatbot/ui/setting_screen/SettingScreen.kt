@@ -78,9 +78,14 @@ fun SettingScreen(
     val handleSubmitForm: () -> Unit = {
         CoroutineScope(Dispatchers.IO).launch {
             for (apiKeyInputField in apiKeyInputFields) {
-                val setting =
-                    Setting(service = apiKeyInputField.service, apiKey = apiKeyInputField.apiKey)
-                settingDAO.insertAll(setting)
+                val service = apiKeyInputField.service
+                val apiKey = apiKeyInputField.apiKey
+
+                if (service.isNotEmpty()) {
+                    settingDAO.insertAll(
+                        Setting(service = service, apiKey = apiKey)
+                    )
+                }
             }
         }
     }
@@ -163,10 +168,10 @@ private fun ApiKeyInputSection(
         Icon(imageVector = Icons.Filled.Lock, contentDescription = null)
 
         Column {
-            ExposedDropdownMenuBox(expanded = expanded,
+            ExposedDropdownMenuBox(
+                expanded = expanded,
                 onExpandedChange = { setExpanded(!expanded) }) {
-                OutlinedTextField(
-                    readOnly = true,
+                OutlinedTextField(readOnly = true,
                     value = selectedOptionText,
                     onValueChange = { },
                     label = { Text("Service") },
