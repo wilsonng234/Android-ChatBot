@@ -24,15 +24,21 @@ class MainActivity : ComponentActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             channelDAO.insertAll(
-                Channel(id = 1, service = "Azure OpenAI")
+                Channel(id = 1, service = "Azure OpenAI", model = "gpt-4")
             )
             settingDAO.insertAll(
                 Setting(service = "Azure OpenAI", apiKey = "ea86fbb837a84230aa8acb2993eae139")
             )
 
-            Log.d("onCreate", "onCreate: ${channelDAO.getAll()}")
-            Log.d("onCreate", "onCreate: ${messageDAO.getAll()}")
-            Log.d("onCreate", "onCreate: ${settingDAO.getAll()}")
+            channelDAO.getAll().collect() {
+                Log.d("onCreate", "channels: $it")
+            }
+            messageDAO.getAll().collect() {
+                Log.d("onCreate", "messages: $it")
+            }
+            settingDAO.getAll().collect() {
+                Log.d("onCreate", "settings: $it")
+            }
         }
 
         setContent {
