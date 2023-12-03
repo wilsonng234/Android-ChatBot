@@ -1,5 +1,6 @@
 package com.example.android_chatbot.ui.setting_screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_chatbot.data.DataSource
 import com.example.android_chatbot.data.setting.SettingDAO
-import com.example.android_chatbot.ui.chat_screen.ChatViewModel
 import com.example.android_chatbot.ui.components.FormInputField
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,16 +36,20 @@ import com.example.android_chatbot.ui.components.FormInputField
 fun SettingScreen(
     settingDAO: SettingDAO, modifier: Modifier = Modifier
 ) {
-    val viewModel: SettingViewModel =
-        viewModel(factory = SettingViewModel.Factory(settingDAO))
+    val viewModel: SettingViewModel = viewModel(factory = SettingViewModel.Factory(settingDAO))
     val settings by settingDAO.getAll().collectAsState(initial = emptyList())
+    val (servicesOption, setServicesOption) = remember { mutableStateOf(DataSource.services) }
+    
+    LaunchedEffect(settings) {
+        setServicesOption(DataSource.services - settings.map { it.service }.toSet())
+    }
 
     Column(
         modifier = modifier.padding(vertical = 8.dp)
     ) {
         for (setting in settings) {
             val (expanded, setExpanded) = remember { mutableStateOf(false) }
-            val (selectedOptionText, setSelectedOptionText) = remember { mutableStateOf("") }
+            val (selectedOptionText, setSelectedOptionText) = remember { mutableStateOf(setting.service) }
             val (apiKey, setApiKey) = remember { mutableStateOf(setting.apiKey) }
 
             apiKeyInputSection(
@@ -54,6 +59,8 @@ fun SettingScreen(
                 setSelectedOptionText = setSelectedOptionText,
                 apiKey = apiKey,
                 setApiKey = setApiKey,
+                servicesOption = servicesOption,
+                setServicesOption = setServicesOption,
                 modifier = modifier
             )
 
@@ -71,6 +78,8 @@ private fun apiKeyInputSection(
     setSelectedOptionText: (String) -> Unit,
     apiKey: String,
     setApiKey: (String) -> Unit,
+    servicesOption: List<String>,
+    setServicesOption: (List<String>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -83,7 +92,8 @@ private fun apiKeyInputSection(
         Icon(imageVector = Icons.Filled.Lock, contentDescription = null)
 
         Column {
-            ExposedDropdownMenuBox(expanded = expanded,
+            ExposedDropdownMenuBox(
+                expanded = expanded,
                 onExpandedChange = { setExpanded(!expanded) }) {
                 OutlinedTextField(readOnly = true,
                     value = selectedOptionText,
@@ -101,9 +111,12 @@ private fun apiKeyInputSection(
                 ExposedDropdownMenu(expanded = expanded, onDismissRequest = {
                     setExpanded(false)
                 }) {
-                    DataSource.services.forEach { service ->
-                        DropdownMenuItem(text = { Text(text = service) }, onClick = {
-                            setSelectedOptionText(service)
+                    servicesOption.forEach { serviceOption ->
+                        DropdownMenuItem(text = { Text(text = serviceOption) }, onClick = {
+                            setServicesOption(
+                                servicesOption.plus(selectedOptionText).minus(serviceOption)
+                            )
+                            setSelectedOptionText(serviceOption)
                             setExpanded(false)
                         })
                     }
