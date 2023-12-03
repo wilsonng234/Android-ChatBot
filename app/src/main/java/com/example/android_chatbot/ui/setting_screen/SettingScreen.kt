@@ -33,8 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_chatbot.R
 import com.example.android_chatbot.data.DataSource
+import com.example.android_chatbot.data.setting.Setting
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.ui.components.FormInputField
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 data class ApiKeyInput(
     val service: String = "", val apiKey: String = ""
@@ -64,6 +68,20 @@ fun SettingScreen(
             setServicesOption(DataSource.services - settings.map { it.service }.toSet())
             setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
             setReset(false)
+        }
+    }
+
+    val handleResetForm: () -> Unit = {
+        setReset(true)
+    }
+
+    val handleSubmitForm: () -> Unit = {
+        CoroutineScope(Dispatchers.IO).launch {
+            for (apiKeyInputField in apiKeyInputFields) {
+                val setting =
+                    Setting(service = apiKeyInputField.service, apiKey = apiKeyInputField.apiKey)
+                settingDAO.insertAll(setting)
+            }
         }
     }
 
@@ -115,9 +133,9 @@ fun SettingScreen(
                 .padding(horizontal = 64.dp, vertical = 32.dp)
         ) {
             SubmitFormButton(
-                modifier = modifier.weight(0.2f)
+                handleSubmitForm = handleSubmitForm, modifier = modifier.weight(0.2f)
             )
-            ResetFormButton(setReset, modifier = modifier.weight(0.2f))
+            ResetFormButton(handleResetForm = handleResetForm, modifier = modifier.weight(0.2f))
         }
     }
 }
@@ -147,7 +165,8 @@ private fun ApiKeyInputSection(
         Column {
             ExposedDropdownMenuBox(expanded = expanded,
                 onExpandedChange = { setExpanded(!expanded) }) {
-                OutlinedTextField(readOnly = true,
+                OutlinedTextField(
+                    readOnly = true,
                     value = selectedOptionText,
                     onValueChange = { },
                     label = { Text("Service") },
@@ -204,12 +223,10 @@ private fun AddApiKeyInputSectionButton(
 
 @Composable
 private fun SubmitFormButton(
-    modifier: Modifier = Modifier
+    handleSubmitForm: () -> Unit, modifier: Modifier = Modifier
 ) {
     ElevatedButton(
-        onClick = {
-
-        }, colors = ButtonDefaults.elevatedButtonColors(
+        onClick = { handleSubmitForm() }, colors = ButtonDefaults.elevatedButtonColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.primary
         ), modifier = modifier.padding(horizontal = 8.dp)
@@ -220,10 +237,10 @@ private fun SubmitFormButton(
 
 @Composable
 private fun ResetFormButton(
-    setReset: (Boolean) -> Unit, modifier: Modifier = Modifier
+    handleResetForm: () -> Unit, modifier: Modifier = Modifier
 ) {
     ElevatedButton(
-        onClick = { setReset(true) }, colors = ButtonDefaults.elevatedButtonColors(
+        onClick = { handleResetForm() }, colors = ButtonDefaults.elevatedButtonColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.primary
         ), modifier = modifier.padding(horizontal = 8.dp)
