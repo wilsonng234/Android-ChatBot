@@ -36,7 +36,7 @@ fun StartScreen(
 
             ChatHistoryCard(
                 iconId = ser,
-                cnlId = channel.id,
+                channelId = channel.id,
                 service = channel.service,
                 model = "ChatGPTToDO",
                 title = "Title",
