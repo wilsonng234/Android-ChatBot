@@ -45,10 +45,19 @@ fun SettingScreen(
     val settings by settingDAO.getAll().collectAsState(initial = emptyList())
     val (servicesOption, setServicesOption) = remember { mutableStateOf(DataSource.services) }
     val (numApiKeyInputSection, setNumApiKeyInputSection) = remember { mutableIntStateOf(0) }
+    val (reset, setReset) = remember { mutableStateOf(false) }
 
     LaunchedEffect(settings) {
         setServicesOption(DataSource.services - settings.map { it.service }.toSet())
         setNumApiKeyInputSection(numApiKeyInputSection + settings.size)
+    }
+
+    LaunchedEffect(reset) {
+        if (reset) {
+            setServicesOption(DataSource.services - settings.map { it.service }.toSet())
+            setNumApiKeyInputSection(settings.size)
+            setReset(false)
+        }
     }
 
     Column(
@@ -58,6 +67,11 @@ fun SettingScreen(
             val (expanded, setExpanded) = remember { mutableStateOf(false) }
             val (selectedOptionText, setSelectedOptionText) = remember { mutableStateOf(setting.service) }
             val (apiKey, setApiKey) = remember { mutableStateOf(setting.apiKey) }
+
+            LaunchedEffect(key1 = reset) {
+                setSelectedOptionText(setting.service)
+                setApiKey(setting.apiKey)
+            }
 
             ApiKeyInputSection(
                 expanded = expanded,
@@ -109,7 +123,7 @@ fun SettingScreen(
                 .padding(horizontal = 64.dp, vertical = 32.dp)
         ) {
             SubmitFormButton(modifier = modifier.weight(0.2f))
-            ResetFormButton(modifier = modifier.weight(0.2f))
+            ResetFormButton(setReset, modifier = modifier.weight(0.2f))
         }
     }
 }
@@ -211,9 +225,11 @@ private fun SubmitFormButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ResetFormButton(modifier: Modifier = Modifier) {
+private fun ResetFormButton(
+    setReset: (Boolean) -> Unit, modifier: Modifier = Modifier
+) {
     ElevatedButton(
-        onClick = { }, colors = ButtonDefaults.elevatedButtonColors(
+        onClick = { setReset(true) }, colors = ButtonDefaults.elevatedButtonColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.primary
         ), modifier = modifier.padding(horizontal = 8.dp)
