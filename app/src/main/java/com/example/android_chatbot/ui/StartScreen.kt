@@ -12,7 +12,8 @@ import com.example.android_chatbot.ui.components.ChatHistoryCard
 
 @Composable
 fun StartScreen(
-    channelDAO: ChannelDAO, messageDAO: MessageDAO, modifier: Modifier = Modifier
+    channelDAO: ChannelDAO, messageDAO: MessageDAO,
+    onClick: (Int)->Unit,modifier: Modifier = Modifier
 ) {
     val channels by channelDAO.getAll().collectAsState(initial = emptyList())
     if(channels.isNotEmpty()){
@@ -20,11 +21,10 @@ fun StartScreen(
             val messages by messageDAO.getMessagesByChannelId(channel.id)
                 .collectAsState(initial = emptyList())
             val lastMessage = messages.lastOrNull()
-            var ser:Int= 0;
-            if(channel.service.contains("azure")){
-                ser = R.drawable.azure
+            var ser = if(channel.service.contains("azure")){
+                R.drawable.azure
             }else if(channel.service.contains("openai")){
-                ser = R.drawable.openai
+                R.drawable.openai
             }else{
                 Log.i("service", channel.service)
                 throw IllegalStateException("Unknown service")
@@ -33,13 +33,13 @@ fun StartScreen(
 
             ChatHistoryCard(
                 iconId = ser,
-                contentDesc = channel.service,
+                cnlId = channel.id  ,
                 service = channel.service,
                 model = "ChatGPTToDO",
                 title = "Title",
                 recentChat = lastMessage?.content ?: "",
                 time = lastMessage?.createdTime,
-                onClick = {},
+                onClick = onClick,
                 modifier = modifier
             )
         }
