@@ -27,7 +27,7 @@ object AzureOpenAIService {
         CoroutineScope(Dispatchers.IO).launch {
             apiKey = settingDAO.getSettingByService(service = "Azure OpenAI").apiKey
             endPoint =
-                "https://hkust.azure-api.net/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-05-15"
+                "https://hkust.azure-api.net/openai/deployments/{model}/chat/completions?api-version=2023-05-15"
         }
     }
 
@@ -38,10 +38,10 @@ object AzureOpenAIService {
      *   The first element is the response content.
      *   The second element is whether the response is successful.
      **/
-    suspend fun getChatResponse(messages: List<Message>): Pair<String, Boolean> {
+    suspend fun getChatResponse(messages: List<Message>, model: String): Pair<String, Boolean> {
         val client = HttpClient()
         val responseBody: HttpResponse = client.post {
-            url(endPoint)
+            url(endPoint.replace("{model}", model))
             header("api-key", apiKey)
             contentType(ContentType.Application.Json)
 

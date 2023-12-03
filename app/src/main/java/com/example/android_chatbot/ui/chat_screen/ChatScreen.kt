@@ -6,13 +6,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.android_chatbot.data.channel.Channel
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.message.MessageDAO
@@ -35,8 +39,15 @@ fun ChatScreen(
 ) {
     val viewModel: ChatViewModel =
         viewModel(factory = ChatViewModel.Factory(messageDAO, settingDAO, channelId))
+    var channel by remember { mutableStateOf<Channel?>(null) }
     val channelMessages by messageDAO.getMessagesByChannelId(channelId)
         .collectAsState(initial = emptyList())
+
+    LaunchedEffect(Unit) {
+        viewModel.viewModelScope.launch(Dispatchers.IO) {
+            channel = channelDAO.getChannelById(channelId)
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -52,7 +63,7 @@ fun ChatScreen(
         val (inputPrompt, setInputPrompt) = remember { mutableStateOf("") }
         RoundedInputField(inputPrompt, onValueChange = { setInputPrompt(it) }, onSendMessage = {
             handleOnSendMessage(
-                messageDAO, channelId, channelMessages, inputPrompt, setInputPrompt
+                messageDAO, channel!!, channelMessages, inputPrompt, setInputPrompt
             )
         }, modifier = modifier
         )
@@ -61,14 +72,14 @@ fun ChatScreen(
 
 private fun handleOnSendMessage(
     messageDAO: MessageDAO,
-    channelId: Int,
+    channel: Channel,
     channelMessages: List<Message>,
     inputPrompt: String,
     setInputPrompt: (String) -> Unit
 ) {
     CoroutineScope(Dispatchers.IO).launch {
         val inputMessage = Message(
-            channelId = channelId,
+            channelId = channel.id,
             role = "user",
             content = inputPrompt,
             createdTime = System.currentTimeMillis()
@@ -77,10 +88,13 @@ private fun handleOnSendMessage(
         messageDAO.insertAll(inputMessage)
         setInputPrompt("")
 
-        val response = AzureOpenAIService.getChatResponse(channelMessages.plus(inputMessage))
+        val response = AzureOpenAIService.getChatResponse(
+            messages = channelMessages.plus(inputMessage),
+            model = channel.model
+        )
         messageDAO.insertAll(
             Message(
-                channelId = channelId,
+                channelId = channel.id,
                 role = "assistant",
                 content = response.first,
                 createdTime = System.currentTimeMillis()
