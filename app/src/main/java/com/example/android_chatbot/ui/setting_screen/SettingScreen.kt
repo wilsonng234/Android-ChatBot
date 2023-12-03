@@ -59,7 +59,7 @@ fun SettingScreen(
             val (selectedOptionText, setSelectedOptionText) = remember { mutableStateOf(setting.service) }
             val (apiKey, setApiKey) = remember { mutableStateOf(setting.apiKey) }
 
-            apiKeyInputSection(
+            ApiKeyInputSection(
                 expanded = expanded,
                 setExpanded = setExpanded,
                 selectedOptionText = selectedOptionText,
@@ -68,8 +68,6 @@ fun SettingScreen(
                 setApiKey = setApiKey,
                 servicesOption = servicesOption,
                 setServicesOption = setServicesOption,
-                numApiKeyInputSection = numApiKeyInputSection,
-                setNumApiKeyInputSection = setNumApiKeyInputSection,
                 modifier = modifier
             )
 
@@ -81,7 +79,7 @@ fun SettingScreen(
             val (selectedOptionText, setSelectedOptionText) = remember { mutableStateOf("") }
             val (apiKey, setApiKey) = remember { mutableStateOf("") }
 
-            apiKeyInputSection(
+            ApiKeyInputSection(
                 expanded = expanded,
                 setExpanded = setExpanded,
                 selectedOptionText = selectedOptionText,
@@ -90,8 +88,6 @@ fun SettingScreen(
                 setApiKey = setApiKey,
                 servicesOption = servicesOption,
                 setServicesOption = setServicesOption,
-                numApiKeyInputSection = numApiKeyInputSection,
-                setNumApiKeyInputSection = setNumApiKeyInputSection,
                 modifier = modifier
             )
 
@@ -109,7 +105,7 @@ fun SettingScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun apiKeyInputSection(
+private fun ApiKeyInputSection(
     expanded: Boolean,
     setExpanded: (Boolean) -> Unit,
     selectedOptionText: String,
@@ -118,8 +114,6 @@ private fun apiKeyInputSection(
     setApiKey: (String) -> Unit,
     servicesOption: List<String>,
     setServicesOption: (List<String>) -> Unit,
-    numApiKeyInputSection: Int,
-    setNumApiKeyInputSection: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
