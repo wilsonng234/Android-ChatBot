@@ -17,6 +17,8 @@ import com.example.android_chatbot.data.message.Message
 fun MessageBubble(message: Message) {
     Surface(
         shape = MaterialTheme.shapes.medium,
+        color = if (message.role == "user") MaterialTheme.colorScheme.primary
+        else MaterialTheme.colorScheme.background,
         tonalElevation = 4.dp,
         modifier = Modifier
             .padding(vertical = 4.dp)
