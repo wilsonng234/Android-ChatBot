@@ -31,47 +31,50 @@ fun ChatHistoryCard(
     title: String,
     recentChat: String,
     time: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Box(modifier = Modifier
+    Box(modifier = modifier
         .fillMaxWidth()
-        .clickable { onClick }
+        .clickable { onClick() }
         .border(BorderStroke(1.dp, Color.Black.copy(alpha = 0.3f)))) {
         Row(
-            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()
+            verticalAlignment = Alignment.CenterVertically, modifier = modifier.fillMaxWidth()
         ) {
             Image(
                 painter = painterResource(id = iconId),
                 contentDescription = contentDesc,
-                modifier = Modifier
+                modifier = modifier
                     .padding(12.dp)
                     .weight(0.2f)
             )
             Column(
-                modifier = Modifier
+                modifier = modifier
                     .padding(8.dp)
                     .weight(0.8f)
             ) {
                 Text(
                     text = "$service $model",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black.copy(alpha = 0.5f)
+                    color = Color.Black.copy(alpha = 0.5f),
+                    modifier = modifier
                 )
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 2.dp, bottom = 3.dp)
+                    modifier = modifier.padding(top = 2.dp, bottom = 3.dp),
                 )
                 Text(
                     text = recentChat,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black.copy(alpha = 0.5f)
+                    color = Color.Black.copy(alpha = 0.5f),
+                    modifier = modifier
                 )
             }
         }
         Text(
             text = time,
-            modifier = Modifier
+            modifier = modifier
                 .align(Alignment.TopEnd)
                 .padding(8.dp)
                 .padding(4.dp)
@@ -83,13 +86,12 @@ fun ChatHistoryCard(
 @Preview
 @Composable
 fun ChatHistoryCardPreview() {
-    ChatHistoryCard(
-        R.drawable.azure,
-        null,
-        "Azure OpenAI",
-        "ChatGPT-4",
-        "HKUST",
-        "HKUST is a school that...",
-        "12:00"
-    ) {}
+    ChatHistoryCard(iconId = R.drawable.azure,
+        contentDesc = null,
+        service = "Azure OpenAI",
+        model = "gpt-4",
+        title = "title",
+        recentChat = "recent chat ...",
+        time = "time",
+        onClick = {})
 }
