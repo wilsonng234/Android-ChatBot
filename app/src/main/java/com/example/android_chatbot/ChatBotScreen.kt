@@ -3,6 +3,7 @@ package com.example.android_chatbot
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -145,60 +146,64 @@ fun ChatBotApp(
     )
 
     ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
-        ModalDrawerSheet(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            Text("Android ChatBot", modifier = Modifier.padding(16.dp))
-            Divider()
+        ModalDrawerSheet(modifier = Modifier.fillMaxHeight()) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Text("Android ChatBot", modifier = Modifier.padding(16.dp))
+                Divider()
 
-            for (channel in channels) {
-                val messages by messageDAO.getMessagesByChannelId(channel.id)
-                    .collectAsState(initial = emptyList())
-                val lastMessage = messages.lastOrNull()
-                val ser = when (channel.service) {
-                    "Azure OpenAI" -> {
-                        R.drawable.azure
-                    }
+                for (channel in channels) {
+                    val messages by messageDAO.getMessagesByChannelId(channel.id)
+                        .collectAsState(initial = emptyList())
+                    val lastMessage = messages.lastOrNull()
+                    val ser = when (channel.service) {
+                        "Azure OpenAI" -> {
+                            R.drawable.azure
+                        }
 
-                    "OpenAI" -> {
-                        R.drawable.openai
-                    }
-
-                    else -> {
-                        throw IllegalStateException("Unknown service")
-                    }
-                }
-
-                ChatHistoryCard(
-                    iconId = ser,
-                    channelId = channel.id,
-                    service = channel.service,
-                    model = "gpt-4",
-                    title = "Title",
-                    recentChat = lastMessage?.content ?: "",
-                    time = lastMessage?.createdTime,
-                    onClick = ::handleChatCardClicked,
-                    modifier = Modifier
-                )
-            }
-
-            Divider()
-
-            menuItemIds.map { menuItemId ->
-                MenuItemCard(
-                    icon = when (menuItemId) {
-                        ChatBotScreen.AllChats.title -> Icons.Outlined.Face
-                        ChatBotScreen.SelectBot.title -> Icons.Outlined.Person
-                        ChatBotScreen.Settings.title -> Icons.Outlined.Settings
+                        "OpenAI" -> {
+                            R.drawable.openai
+                        }
 
                         else -> {
-                            throw IllegalStateException("Unknown menu item id: $menuItemId")
+                            throw IllegalStateException("Unknown service")
                         }
-                    },
-                    content = stringResource(id = menuItemId),
-                    handleMenuItemClicked = { handleMenuItemClicked(menuItemId) },
-                    modifier = Modifier.height(60.dp)
-                )
+                    }
+
+                    ChatHistoryCard(
+                        iconId = ser,
+                        channelId = channel.id,
+                        service = channel.service,
+                        model = channel.model,
+                        topic = channel.topic,
+                        recentChat = lastMessage?.content ?: "",
+                        time = lastMessage?.createdTime,
+                        onClick = ::handleChatCardClicked,
+                        modifier = Modifier
+                    )
+                }
 
                 Divider()
+
+                menuItemIds.map { menuItemId ->
+                    MenuItemCard(
+                        icon = when (menuItemId) {
+                            ChatBotScreen.AllChats.title -> Icons.Outlined.Face
+                            ChatBotScreen.SelectBot.title -> Icons.Outlined.Person
+                            ChatBotScreen.Settings.title -> Icons.Outlined.Settings
+
+                            else -> {
+                                throw IllegalStateException("Unknown menu item id: $menuItemId")
+                            }
+                        },
+                        content = stringResource(id = menuItemId),
+                        handleMenuItemClicked = { handleMenuItemClicked(menuItemId) },
+                        modifier = Modifier.height(60.dp)
+                    )
+
+                    Divider()
+                }
             }
         }
     }) {
