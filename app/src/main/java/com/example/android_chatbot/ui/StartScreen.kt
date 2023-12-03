@@ -26,7 +26,6 @@ fun StartScreen(
         Divider(
             modifier = modifier
                 .padding(top = 8.dp)
-                .padding(horizontal = 8.dp)
         )
 
         for (channel in channels) {
