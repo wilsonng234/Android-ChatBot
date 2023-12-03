@@ -6,13 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -144,7 +145,7 @@ fun ChatBotApp(
     )
 
     ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
-        ModalDrawerSheet {
+        ModalDrawerSheet(modifier = Modifier.verticalScroll(rememberScrollState())) {
             Text("Android ChatBot", modifier = Modifier.padding(16.dp))
             Divider()
 
@@ -168,9 +169,9 @@ fun ChatBotApp(
 
                 ChatHistoryCard(
                     iconId = ser,
-                    cnlId = channel.id,
+                    channelId = channel.id,
                     service = channel.service,
-                    model = "ChatGPTToDO",
+                    model = "gpt-4",
                     title = "Title",
                     recentChat = lastMessage?.content ?: "",
                     time = lastMessage?.createdTime,
