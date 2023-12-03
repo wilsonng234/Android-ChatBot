@@ -72,23 +72,26 @@ fun SettingScreen(
     ) {
         for (apiKeyInputField in apiKeyInputFields) {
             val (expanded, setExpanded) = remember { mutableStateOf(false) }
-            val (selectedOptionText, setSelectedOptionText) = remember {
-                mutableStateOf(apiKeyInputField.service)
-            }
-            val (apiKey, setApiKey) = remember { mutableStateOf(apiKeyInputField.apiKey) }
-
-            LaunchedEffect(reset) {
-                setSelectedOptionText(apiKeyInputField.service)
-                setApiKey(apiKeyInputField.apiKey)
-            }
 
             ApiKeyInputSection(
                 expanded = expanded,
                 setExpanded = setExpanded,
-                selectedOptionText = selectedOptionText,
-                setSelectedOptionText = setSelectedOptionText,
-                apiKey = apiKey,
-                setApiKey = setApiKey,
+                selectedOptionText = apiKeyInputField.service,
+                setSelectedOptionText = {
+                    val temp = apiKeyInputFields.map { it }.toMutableList()
+                    temp[apiKeyInputFields.indexOf(apiKeyInputField)] = ApiKeyInput(
+                        it, apiKeyInputField.apiKey
+                    )
+                    setApiKeyInputFields(temp)
+                },
+                apiKey = apiKeyInputField.apiKey,
+                setApiKey = {
+                    val temp = apiKeyInputFields.map { it }.toMutableList()
+                    temp[apiKeyInputFields.indexOf(apiKeyInputField)] = ApiKeyInput(
+                        apiKeyInputField.service, it
+                    )
+                    setApiKeyInputFields(temp)
+                },
                 servicesOption = servicesOption,
                 setServicesOption = setServicesOption,
                 modifier = modifier
@@ -111,7 +114,9 @@ fun SettingScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 64.dp, vertical = 32.dp)
         ) {
-            SubmitFormButton(modifier = modifier.weight(0.2f))
+            SubmitFormButton(
+                modifier = modifier.weight(0.2f)
+            )
             ResetFormButton(setReset, modifier = modifier.weight(0.2f))
         }
     }
@@ -202,7 +207,9 @@ private fun SubmitFormButton(
     modifier: Modifier = Modifier
 ) {
     ElevatedButton(
-        onClick = { }, colors = ButtonDefaults.elevatedButtonColors(
+        onClick = {
+
+        }, colors = ButtonDefaults.elevatedButtonColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.primary
         ), modifier = modifier.padding(horizontal = 8.dp)
