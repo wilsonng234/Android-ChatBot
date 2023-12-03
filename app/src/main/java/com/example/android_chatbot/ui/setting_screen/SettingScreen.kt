@@ -60,14 +60,14 @@ fun SettingScreen(
     val (reset, setReset) = remember { mutableStateOf(false) }
 
     LaunchedEffect(settings) {
-        val temp = listOf("") + DataSource.services - settings.map { it.service }
+        val temp = DataSource.services - settings.map { it.service }
         setServicesOption(temp.sorted())
         setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
     }
 
     LaunchedEffect(reset) {
         if (reset) {
-            val temp = listOf("") + DataSource.services - settings.map { it.service }
+            val temp = DataSource.services - settings.map { it.service }
             setServicesOption(temp.sorted())
             setApiKeyInputFields(settings.map { ApiKeyInput(it.service, it.apiKey) })
             setReset(false)
