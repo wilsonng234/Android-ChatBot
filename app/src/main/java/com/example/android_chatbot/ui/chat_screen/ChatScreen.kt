@@ -63,7 +63,7 @@ fun ChatScreen(
         val (inputPrompt, setInputPrompt) = remember { mutableStateOf("") }
         RoundedInputField(inputPrompt, onValueChange = { setInputPrompt(it) }, onSendMessage = {
             handleOnSendMessage(
-                messageDAO, channel!!, channelMessages, inputPrompt, setInputPrompt
+                channelDAO, messageDAO, channel!!, channelMessages, inputPrompt, setInputPrompt
             )
         }, modifier = modifier
         )
@@ -71,6 +71,7 @@ fun ChatScreen(
 }
 
 private fun handleOnSendMessage(
+    channelDAO: ChannelDAO,
     messageDAO: MessageDAO,
     channel: Channel,
     channelMessages: List<Message>,
@@ -89,8 +90,7 @@ private fun handleOnSendMessage(
         setInputPrompt("")
 
         val response = AzureOpenAIService.getChatResponse(
-            messages = channelMessages.plus(inputMessage),
-            model = channel.model
+            messages = channelMessages.plus(inputMessage), model = channel.model
         )
         messageDAO.insertAll(
             Message(
@@ -100,5 +100,19 @@ private fun handleOnSendMessage(
                 createdTime = System.currentTimeMillis()
             )
         )
+
+        val topicQuestion = Message(
+            channelId = channel.id,
+            role = "user",
+            content = "Give me the topic of this sentence with a sentence not more than three words.\\n:$inputPrompt",
+            createdTime = System.currentTimeMillis()
+        )
+        val topicResponse = AzureOpenAIService.getChatResponse(
+            messages = listOf(topicQuestion), model = channel.model
+        )
+
+        if (topicResponse.second) {
+            channelDAO.updateChannelTopic(topicResponse.first, channel.id)
+        }
     }
 }
