@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,6 +18,7 @@ import com.example.android_chatbot.R
 import com.example.android_chatbot.data.DataSource.servicesToModels
 import com.example.android_chatbot.data.channel.Channel
 import com.example.android_chatbot.data.channel.ChannelDAO
+import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.ui.components.BotInformationCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,15 +32,24 @@ data class BotInformation(
 
 @Composable
 fun SelectBotScreen(
-    channelDAO: ChannelDAO, handleChatRoomClicked: (Long) -> Unit, modifier: Modifier = Modifier
+    channelDAO: ChannelDAO,
+    settingDAO: SettingDAO,
+    handleChatRoomClicked: (Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var botInformationList by remember { mutableStateOf<List<BotInformation>>(emptyList()) }
+    val allSettings by settingDAO.getAll().collectAsState(initial = emptyList())
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(allSettings) {
         val temp = botInformationList.map { it }.toMutableList()
 
         for (entry in servicesToModels.entries.iterator()) {
-            val iconId = when (entry.key) {
+            val service = entry.key
+            if (!allSettings.any { it.service == service }) {
+                continue
+            }
+
+            val iconId = when (service) {
                 "Azure OpenAI" -> {
                     R.drawable.azure
                 }
@@ -53,7 +64,7 @@ fun SelectBotScreen(
             }
 
             for (model in entry.value) {
-                temp.add(BotInformation(iconId, entry.key, model))
+                temp.add(BotInformation(iconId, service, model))
             }
         }
 

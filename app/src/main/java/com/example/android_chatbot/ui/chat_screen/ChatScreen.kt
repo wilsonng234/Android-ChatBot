@@ -22,6 +22,7 @@ import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.model.azure.AzureOpenAIService
+import com.example.android_chatbot.model.openai.OpenAIService
 import com.example.android_chatbot.ui.components.MessageBubble
 import com.example.android_chatbot.ui.components.RoundedInputField
 import kotlinx.coroutines.CoroutineScope
@@ -63,7 +64,13 @@ fun ChatScreen(
         val (inputPrompt, setInputPrompt) = remember { mutableStateOf("") }
         RoundedInputField(inputPrompt, onValueChange = { setInputPrompt(it) }, onSendMessage = {
             handleOnSendMessage(
-                channelDAO, messageDAO, channel!!, channelMessages, inputPrompt, setInputPrompt
+                channelDAO,
+                messageDAO,
+                settingDAO,
+                channel!!,
+                channelMessages,
+                inputPrompt,
+                setInputPrompt
             )
         }, modifier = modifier
         )
@@ -73,12 +80,24 @@ fun ChatScreen(
 private fun handleOnSendMessage(
     channelDAO: ChannelDAO,
     messageDAO: MessageDAO,
-    channel: Channel,
+    settingDAO: SettingDAO,
+    channel: Channel?,
     channelMessages: List<Message>,
     inputPrompt: String,
     setInputPrompt: (String) -> Unit
 ) {
+    if (channel == null) {
+        return
+    }
+
     CoroutineScope(Dispatchers.IO).launch {
+        val service = when (channel.service) {
+            "Azure OpenAI" -> AzureOpenAIService
+            "OpenAI" -> OpenAIService
+            else -> throw Exception("Invalid service")
+        }
+        service.init(settingDAO)
+
         val inputMessage = Message(
             channelId = channel.id,
             role = "user",
@@ -89,7 +108,7 @@ private fun handleOnSendMessage(
         messageDAO.insertAll(inputMessage)
         setInputPrompt("")
 
-        val response = AzureOpenAIService.getChatResponse(
+        val response = service.getChatResponse(
             messages = channelMessages.plus(inputMessage), model = channel.model
         )
         messageDAO.insertAll(
@@ -107,7 +126,7 @@ private fun handleOnSendMessage(
             content = "Give me the topic of this sentence with a sentence not more than three words.\\n:$inputPrompt",
             createdTime = System.currentTimeMillis()
         )
-        val topicResponse = AzureOpenAIService.getChatResponse(
+        val topicResponse = service.getChatResponse(
             messages = listOf(topicQuestion), model = channel.model
         )
 

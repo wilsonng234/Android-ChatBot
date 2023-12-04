@@ -3,6 +3,7 @@ package com.example.android_chatbot.model.azure
 import android.util.Log
 import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.setting.SettingDAO
+import com.example.android_chatbot.model.ChatBotService
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.header
@@ -13,22 +14,25 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 
 
-object AzureOpenAIService {
+object AzureOpenAIService : ChatBotService() {
     private lateinit var apiKey: String
     private lateinit var endPoint: String
 
-    fun init(settingDAO: SettingDAO) {
-        CoroutineScope(Dispatchers.IO).launch {
-            apiKey = settingDAO.getSettingByService(service = "Azure OpenAI").apiKey
-            endPoint =
-                "https://hkust.azure-api.net/openai/deployments/{model}/chat/completions?api-version=2023-05-15"
+    override suspend fun init(settingDAO: SettingDAO) {
+        try {
+            withContext(Dispatchers.IO) {
+                apiKey = settingDAO.getSettingByService(service = "Azure OpenAI").apiKey
+                endPoint =
+                    "https://hkust.azure-api.net/openai/deployments/{model}/chat/completions?api-version=2023-05-15"
+            }
+        } catch (e: Exception) {
+            Log.e("AzureOpenAIService", "init: ${e.message}")
         }
     }
 
@@ -39,7 +43,9 @@ object AzureOpenAIService {
      *   The first element is the response content.
      *   The second element is whether the response is successful.
      **/
-    suspend fun getChatResponse(messages: List<Message>, model: String): Pair<String, Boolean> {
+    override suspend fun getChatResponse(
+        messages: List<Message>, model: String
+    ): Pair<String, Boolean> {
         val responseBody: HttpResponse = try {
             val client = HttpClient(CIO)
             val responseBody: HttpResponse = client.post {

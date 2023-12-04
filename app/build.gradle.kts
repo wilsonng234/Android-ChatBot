@@ -83,6 +83,9 @@ dependencies {
 
     androidTestImplementation("androidx.navigation:navigation-testing:$navVersion")
 
+    val openAIClientVersion = "3.6.1"
+    implementation("com.aallam.openai:openai-client:$openAIClientVersion")
+
     testImplementation("junit:junit:4.13.2")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

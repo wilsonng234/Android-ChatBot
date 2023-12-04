@@ -16,7 +16,10 @@ import com.example.android_chatbot.data.channel.Channel
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.message.MessageDAO
+import com.example.android_chatbot.data.setting.SettingDAO
+import com.example.android_chatbot.model.ChatBotService
 import com.example.android_chatbot.model.azure.AzureOpenAIService
+import com.example.android_chatbot.model.openai.OpenAIService
 import com.example.android_chatbot.ui.components.ChatHistoryCard
 import com.example.android_chatbot.ui.components.RoundedInputField
 import kotlinx.coroutines.CoroutineScope
@@ -29,6 +32,7 @@ import kotlinx.coroutines.withContext
 fun StartScreen(
     channelDAO: ChannelDAO,
     messageDAO: MessageDAO,
+    settingDAO: SettingDAO,
     onClick: (Long) -> Unit,
     handleEnteringChatRoom: (channelId: Long) -> Unit,
     modifier: Modifier = Modifier
@@ -84,13 +88,20 @@ fun StartScreen(
 
         RoundedInputField(
             value = inputPrompt, onValueChange = setInputPrompt, onSendMessage = {
-                val service = "Azure OpenAI"
-                val model = "gpt-4"
+                val modelService = "OpenAI"
+                val model = "gpt-3.5-turbo"
 
                 CoroutineScope(Dispatchers.IO).launch {
+                    val service: ChatBotService = when (modelService) {
+                        "Azure OpenAI" -> AzureOpenAIService
+                        "OpenAI" -> OpenAIService
+                        else -> throw Exception("Invalid service")
+                    }
+                    service.init(settingDAO)
+
                     val channelIds = channelDAO.insertAll(
                         Channel(
-                            service = service, model = model
+                            service = modelService, model = model
                         )
                     )
                     val channelId = channelIds[0]
@@ -104,7 +115,7 @@ fun StartScreen(
                     messageDAO.insertAll(inputMessage)
 
                     async {
-                        val response = AzureOpenAIService.getChatResponse(
+                        val response = service.getChatResponse(
                             messages = listOf(inputMessage), model = model
                         )
                         messageDAO.insertAll(
@@ -115,6 +126,20 @@ fun StartScreen(
                                 createdTime = System.currentTimeMillis()
                             )
                         )
+
+                        val topicQuestion = Message(
+                            channelId = channelId,
+                            role = "user",
+                            content = "Give me the topic of this sentence with a sentence not more than three words.\\n:$inputPrompt",
+                            createdTime = System.currentTimeMillis()
+                        )
+                        val topicResponse = service.getChatResponse(
+                            messages = listOf(topicQuestion), model = model
+                        )
+
+                        if (topicResponse.second) {
+                            channelDAO.updateChannelTopic(topicResponse.first, channelId)
+                        }
                     }
 
                     withContext(Dispatchers.Main) {
