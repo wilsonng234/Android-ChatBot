@@ -19,4 +19,7 @@ interface SettingDAO {
 
     @Query("DELETE FROM setting")
     fun deleteAll()
+
+    @Query("DELETE FROM setting WHERE id = :id")
+    fun deleteById(id: Long)
 }
