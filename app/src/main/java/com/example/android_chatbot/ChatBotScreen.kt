@@ -96,7 +96,15 @@ fun ChatBotApp(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val channels by channelDAO.getFiveRecentChannels().collectAsState(initial = emptyList())
+    val channels by channelDAO.getAll().collectAsState(initial = emptyList())
+    val channelsLastMessage = channels.map { channel ->
+        val messages by messageDAO.getMessagesByChannelId(channel.id)
+            .collectAsState(initial = emptyList())
+        channel to messages.lastOrNull()
+    }
+    val sortedChannelsLastMessage = channelsLastMessage.sortedByDescending { channelsLastMessage ->
+        channelsLastMessage.second?.createdTime ?: 0
+    }
 
     fun handleChatCardClicked(Id: Long) {
         scope.launch {
@@ -158,7 +166,9 @@ fun ChatBotApp(
                 Text("Android ChatBot", modifier = Modifier.padding(16.dp))
                 Divider()
 
-                for (channel in channels) {
+                for (channelLastMessage in sortedChannelsLastMessage) {
+                    val channel = channelLastMessage.first
+
                     val messages by messageDAO.getMessagesByChannelId(channel.id)
                         .collectAsState(initial = emptyList())
                     val lastMessage = messages.lastOrNull()

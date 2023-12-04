@@ -26,15 +26,20 @@ fun StartScreen(
 ) {
     val channels by channelDAO.getAll().collectAsState(initial = emptyList())
     val (inputPrompt, setInputPrompt) = remember { mutableStateOf("") }
+    val channelsLastMessage = channels.map { channel ->
+        val messages by messageDAO.getMessagesByChannelId(channel.id)
+            .collectAsState(initial = emptyList())
+        channel to messages.lastOrNull()
+    }
+    val sortedChannelsLastMessage = channelsLastMessage.sortedByDescending { channelsLastMessage ->
+        channelsLastMessage.second?.createdTime ?: 0
+    }
 
     Column(verticalArrangement = Arrangement.SpaceBetween, modifier = modifier) {
         LazyColumn(modifier = modifier.fillMaxHeight(0.85f)) {
-            items(channels) { channel ->
-                val messages by messageDAO.getMessagesByChannelId(channel.id)
-                    .collectAsState(initial = emptyList())
-                val lastMessage by messageDAO.getLastMessageByChannelId(channel.id).collectAsState(
-                    initial = null
-                )
+            items(sortedChannelsLastMessage) { channelLastMessage ->
+                val channel = channelLastMessage.first
+                val lastMessage = channelLastMessage.second
 
                 val ser = when (channel.service) {
                     "Azure OpenAI" -> {
@@ -66,5 +71,12 @@ fun StartScreen(
                 )
             }
         }
+
+        RoundedInputField(
+            value = inputPrompt,
+            onValueChange = setInputPrompt,
+            onSendMessage = { /*TODO*/ },
+            modifier = modifier
+        )
     }
 }
