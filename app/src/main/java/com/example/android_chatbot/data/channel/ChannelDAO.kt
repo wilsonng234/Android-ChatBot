@@ -18,7 +18,9 @@ interface ChannelDAO {
                GROUP BY CHANNEL.id
           )
               SELECT channel.id, channel.service, channel.model, channel.topic
-              FROM channel NATURAL JOIN message JOIN channel_message cm ON CHANNEL.id = cm.id and message.created_time = cm.min_created_time"""
+              FROM channel NATURAL JOIN message JOIN channel_message cm ON CHANNEL.id = cm.id and message.created_time = cm.min_created_time
+              order by message.created_time desc limit 5
+              """
     )
     fun getFiveRecentChannels(): Flow<List<Channel>>
 
