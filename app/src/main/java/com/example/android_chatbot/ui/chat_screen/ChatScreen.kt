@@ -81,11 +81,15 @@ private fun handleOnSendMessage(
     channelDAO: ChannelDAO,
     messageDAO: MessageDAO,
     settingDAO: SettingDAO,
-    channel: Channel,
+    channel: Channel?,
     channelMessages: List<Message>,
     inputPrompt: String,
     setInputPrompt: (String) -> Unit
 ) {
+    if (channel == null) {
+        return
+    }
+
     CoroutineScope(Dispatchers.IO).launch {
         val service = when (channel.service) {
             "Azure OpenAI" -> AzureOpenAIService
