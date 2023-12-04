@@ -98,9 +98,9 @@ fun ChatBotTopAppBar(
                     if (currentScreen == ChatBotScreen.Start.name) {
                         Text("PayAsYouGo")
                     } else if (currentScreen == ChatBotScreen.Settings.name) {
-                        Text("Setting")
+                        Text("Settings")
                     } else if (currentScreen == ChatBotScreen.SelectBot.name) {
-                        Text("Select Your partner to chat today!")
+                        Text("Select your partner to chat today!")
                     }
 
                 }
