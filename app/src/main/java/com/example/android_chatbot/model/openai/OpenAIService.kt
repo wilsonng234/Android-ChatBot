@@ -22,11 +22,15 @@ object OpenAIService: ChatBotService() {
     private lateinit var openAI: OpenAI
 
     override suspend fun init(settingDAO: SettingDAO) {
-        withContext(Dispatchers.IO) {
-            openAI = OpenAI(
-                token = settingDAO.getSettingByService(service = "OpenAI").apiKey,
-                timeout = Timeout(socket = 60.seconds)
-            )
+        try {
+            withContext(Dispatchers.IO) {
+                openAI = OpenAI(
+                    token = settingDAO.getSettingByService(service = "OpenAI").apiKey,
+                    timeout = Timeout(socket = 60.seconds)
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("OpenAIService", "init: ${e.message}")
         }
     }
 
