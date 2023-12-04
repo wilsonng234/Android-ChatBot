@@ -33,16 +33,22 @@ import com.example.android_chatbot.ui.theme.AndroidChatBotTheme
 fun RoundedInputField(
     value: String,
     onValueChange: (String) -> Unit,
+    enabled: Boolean = true,
     onSendMessage: () -> Unit,
     placeholder: String = stringResource(R.string.message_chat_bot),
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = value,
+        enabled = enabled,
         onValueChange = onValueChange,
         shape = RoundedCornerShape(50.dp),
         placeholder = { Text(text = placeholder) },
-        trailingIcon = { SendIconButton(onClick = onSendMessage, modifier = modifier) },
+        trailingIcon = {
+            SendIconButton(onClick = {
+                if (enabled && value.isNotEmpty()) onSendMessage()
+            }, modifier = modifier)
+        },
         modifier = modifier
             .fillMaxWidth()
             .padding(20.dp),

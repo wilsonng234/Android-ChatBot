@@ -147,7 +147,10 @@ fun StartScreen(
             }
 
             RoundedInputField(
-                value = inputPrompt, onValueChange = setInputPrompt, onSendMessage = {
+                value = inputPrompt,
+                onValueChange = setInputPrompt,
+                enabled = selectedService.isNotEmpty() && selectedModel.isNotEmpty(),
+                onSendMessage = {
                     CoroutineScope(Dispatchers.IO).launch {
                         val service: ChatBotService = when (selectedService) {
                             "Azure OpenAI" -> AzureOpenAIService
@@ -205,7 +208,8 @@ fun StartScreen(
 
                         setInputPrompt("")
                     }
-                }, modifier = modifier
+                },
+                modifier = modifier
             )
         }
     }
