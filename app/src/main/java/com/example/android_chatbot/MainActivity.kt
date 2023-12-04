@@ -1,7 +1,6 @@
 package com.example.android_chatbot
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.android_chatbot.data.channel.Channel
@@ -24,21 +23,18 @@ class MainActivity : ComponentActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             channelDAO.insertAll(
-                Channel(id = 1, service = "Azure OpenAI", model = "gpt-4")
-            )
-            settingDAO.insertAll(
-                Setting(service = "Azure OpenAI", apiKey = "ea86fbb837a84230aa8acb2993eae139")
+                Channel(id = 1, service = "Azure OpenAI", model = "gpt-35-turbo"),
+                Channel(id = 2, service = "Azure OpenAI", model = "gpt-4"),
+                Channel(id = 3, service = "OpenAI", model = "gpt-3.5-turbo")
             )
 
-            channelDAO.getAll().collect() {
-                Log.d("onCreate", "channels: $it")
-            }
-            messageDAO.getAll().collect() {
-                Log.d("onCreate", "messages: $it")
-            }
-            settingDAO.getAll().collect() {
-                Log.d("onCreate", "settings: $it")
-            }
+            settingDAO.insertAll(
+                Setting(service = "Azure OpenAI", apiKey = "908b37ffe5c74e158d70c41bd9e54479"),
+                Setting(
+                    service = "OpenAI",
+                    apiKey = "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"
+                )
+            )
         }
 
         setContent {

@@ -11,6 +11,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,14 +33,22 @@ import com.example.android_chatbot.ui.theme.AndroidChatBotTheme
 fun RoundedInputField(
     value: String,
     onValueChange: (String) -> Unit,
+    enabled: Boolean = true,
     onSendMessage: () -> Unit,
+    placeholder: String = stringResource(R.string.message_chat_bot),
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = value,
+        enabled = enabled,
         onValueChange = onValueChange,
         shape = RoundedCornerShape(50.dp),
-        trailingIcon = { SendIconButton(onClick = onSendMessage, modifier = modifier) },
+        placeholder = { Text(text = placeholder) },
+        trailingIcon = {
+            SendIconButton(onClick = {
+                if (enabled && value.isNotEmpty()) onSendMessage()
+            }, modifier = modifier)
+        },
         modifier = modifier
             .fillMaxWidth()
             .padding(20.dp),
@@ -52,7 +61,7 @@ fun RoundedInputField(
 @Composable
 private fun SendIconButton(
     onClick: () -> Unit = {},
-    color: Color = MaterialTheme.colorScheme.primary,
+    color: Color = MaterialTheme.colorScheme.secondary,
     modifier: Modifier = Modifier
 ) {
     IconButton(onClick = onClick, modifier = modifier) {
