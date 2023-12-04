@@ -11,6 +11,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,12 +34,14 @@ fun RoundedInputField(
     value: String,
     onValueChange: (String) -> Unit,
     onSendMessage: () -> Unit,
+    placeholder: String = stringResource(R.string.message_chat_bot),
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         shape = RoundedCornerShape(50.dp),
+        placeholder = { Text(text = placeholder) },
         trailingIcon = { SendIconButton(onClick = onSendMessage, modifier = modifier) },
         modifier = modifier
             .fillMaxWidth()
