@@ -1,7 +1,6 @@
 package com.example.android_chatbot
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +38,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -57,6 +55,7 @@ import com.example.android_chatbot.ui.StartScreen
 import com.example.android_chatbot.ui.chat_screen.ChatScreen
 import com.example.android_chatbot.ui.components.ChatHistoryCard
 import com.example.android_chatbot.ui.components.MenuItemCard
+import com.example.android_chatbot.ui.components.TopBarCard
 import com.example.android_chatbot.ui.select_bot_screen.SelectBotScreen
 import com.example.android_chatbot.ui.setting_screen.SettingScreen
 import kotlinx.coroutines.CoroutineScope
@@ -79,50 +78,47 @@ fun ChatBotTopAppBar(
     handleNavigationIconClicked: (Boolean) -> () -> Unit = { {} },
     modifier: Modifier = Modifier
 ) {
-    TopAppBar(title = { Text("") }, colors = mediumTopAppBarColors(
-        containerColor = MaterialTheme.colorScheme.primaryContainer
-    ), modifier = modifier, navigationIcon = {
+    TopAppBar(title = {
         Row {
-            IconButton(onClick = handleNavigationIconClicked(canNavigateBack)) {
-                Icon(
-                    imageVector = if (!canNavigateBack) Icons.Filled.Menu else Icons.Filled.ArrowBack,
-                    contentDescription = if (!canNavigateBack) stringResource(R.string.drawer_button) else stringResource(
-                        R.string.back_button
-                    )
-                )
-            }
-            Row(Modifier.align(Alignment.CenterVertically)) {
+            if (currentScreen.contains(ChatBotScreen.Chat.name)) {
                 if (currentScreen.contains(ChatBotScreen.Chat.name)) {
                     if (channel != null) {
-                        Image(
-                            painter = painterResource(id = channel.id.toInt()),
-                            contentDescription = channel.id.toString(),
-                            modifier = modifier
-                                .padding(12.dp)
-                                .weight(0.2f)
+
+                        TopBarCard(
+                            channelId = channel.id,
+                            service = channel.service, model = channel.model,
+                            topic = channel.topic
                         )
-                    }else{
+                    } else {
                         Text("null")
                     }
                 }
-                Column() {
+            } else {
+                Row(Modifier.align(Alignment.CenterVertically)) {
                     if (currentScreen == ChatBotScreen.Start.name) {
                         Text("PayAsYouGo")
                     } else if (currentScreen == ChatBotScreen.Settings.name) {
                         Text("Setting")
                     } else if (currentScreen == ChatBotScreen.SelectBot.name) {
                         Text("Select Your partner to chat today!")
-                    } else if (currentScreen.contains(ChatBotScreen.Chat.name)) {
-                        if (channel != null) {
-                            Text(channel.topic)
-                            Text(channel.model)
-                        }
                     }
+
                 }
             }
-
-
         }
+    }, colors = mediumTopAppBarColors(
+        containerColor = MaterialTheme.colorScheme.primaryContainer
+    ), modifier = modifier, navigationIcon = {
+
+        IconButton(onClick = handleNavigationIconClicked(canNavigateBack)) {
+            Icon(
+                imageVector = if (!canNavigateBack) Icons.Filled.Menu else Icons.Filled.ArrowBack,
+                contentDescription = if (!canNavigateBack) stringResource(R.string.drawer_button) else stringResource(
+                    R.string.back_button
+                )
+            )
+        }
+
 
     })
 }
@@ -138,17 +134,7 @@ fun ChatBotApp(
     val backStackEntry by navHostController.currentBackStackEntryAsState()
     val currentScreen = backStackEntry?.destination?.route ?: ChatBotScreen.Start.name
 
-    val currentChannelId = backStackEntry?.arguments?.getLong("channelId") ?: null
     var currentChannel by remember { mutableStateOf<Channel?>(null) }
-    LaunchedEffect(Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            currentChannel = if (currentChannelId != null) {
-                channelDAO.getChannelById(currentChannelId)
-            } else {
-                null
-            }
-        }
-    }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -299,11 +285,21 @@ fun ChatBotApp(
                         route = ChatBotScreen.Chat.name + "/{channelId}",
                         arguments = listOf(navArgument("channelId") { type = NavType.LongType })
                     ) {
+                        val currentChannelId = it.arguments!!.getLong("channelId")
+                        LaunchedEffect(Unit) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                currentChannel = if (currentChannelId != null) {
+                                    channelDAO.getChannelById(currentChannelId)
+                                } else {
+                                    null
+                                }
+                            }
+                        }
                         ChatScreen(
                             channelDAO = channelDAO,
                             messageDAO = messageDAO,
                             settingDAO = settingDAO,
-                            channelId = it.arguments!!.getLong("channelId")
+                            channelId = currentChannelId
                         )
                     }
                 }
