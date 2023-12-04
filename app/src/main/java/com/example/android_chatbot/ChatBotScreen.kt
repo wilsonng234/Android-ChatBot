@@ -106,14 +106,6 @@ fun ChatBotApp(
         channelsLastMessage.second?.createdTime ?: 0
     }
 
-    fun handleChatCardClicked(Id: Long) {
-        scope.launch {
-            drawerState.close()
-        }
-
-        navHostController.navigate(ChatBotScreen.Chat.name + "/" + Id.toString())
-    }
-
     fun handleNavigationIconClicked(canNavigateBack: Boolean): () -> Unit {
         return if (!canNavigateBack) {
             {
@@ -128,6 +120,18 @@ fun ChatBotApp(
                 navHostController.navigateUp()
             }
         }
+    }
+
+    fun handleEnteringChatRoom(channelId: Long) {
+        navHostController.navigate(ChatBotScreen.Chat.name + "/$channelId")
+    }
+
+    fun handleChatCardClicked(channelId: Long) {
+        scope.launch {
+            drawerState.close()
+        }
+
+        handleEnteringChatRoom(channelId)
     }
 
     fun handleMenuItemClicked(menuItemId: Int) {
@@ -148,10 +152,6 @@ fun ChatBotApp(
                 navHostController.navigate(ChatBotScreen.Settings.name)
             }
         }
-    }
-
-    fun handleChatRoomClicked(channelId: Long) {
-        navHostController.navigate(ChatBotScreen.Chat.name + "/$channelId")
     }
 
     val menuItemIds = listOf(
@@ -246,7 +246,7 @@ fun ChatBotApp(
                     }
                     composable(route = ChatBotScreen.SelectBot.name) {
                         SelectBotScreen(channelDAO = channelDAO, handleChatRoomClicked = {
-                            handleChatRoomClicked(it)
+                            handleEnteringChatRoom(it)
                         })
                     }
                     composable(route = ChatBotScreen.Settings.name) {
