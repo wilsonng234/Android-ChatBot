@@ -51,19 +51,19 @@ android {
 }
 
 dependencies {
+    val bom_version = "2023.10.01"
+    implementation(platform("androidx.compose:compose-bom:$bom_version"))
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+
     val core_ktx_version = "1.12.0"
     implementation("androidx.core:core-ktx:$core_ktx_version")
 
     val activity_version = "1.8.1"
     implementation("androidx.activity:activity-compose:$activity_version")
 
-    val compose_ui_version = "1.5.4"
-    implementation("androidx.compose.ui:ui:$compose_ui_version")
-    implementation("androidx.compose.ui:ui-graphics:$compose_ui_version")
-    implementation("androidx.compose.ui:ui-tooling-preview:$compose_ui_version")
-
-    val material3_version = "1.1.2"
-    implementation("androidx.compose.material3:material3:$material3_version")
 
     val lifecycle_version = "2.6.2"
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
