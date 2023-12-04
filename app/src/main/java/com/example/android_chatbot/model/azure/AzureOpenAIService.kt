@@ -17,6 +17,7 @@ import io.ktor.http.contentType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -25,8 +26,8 @@ object AzureOpenAIService: ChatBotService(){
     private lateinit var apiKey: String
     private lateinit var endPoint: String
 
-    override fun init(settingDAO: SettingDAO) {
-        CoroutineScope(Dispatchers.IO).launch {
+    override suspend fun init(settingDAO: SettingDAO) {
+        withContext(Dispatchers.IO) {
             apiKey = settingDAO.getSettingByService(service = "Azure OpenAI").apiKey
             endPoint =
                 "https://hkust.azure-api.net/openai/deployments/{model}/chat/completions?api-version=2023-05-15"

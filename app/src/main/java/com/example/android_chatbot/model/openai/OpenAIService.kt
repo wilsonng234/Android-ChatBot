@@ -15,13 +15,14 @@ import com.example.android_chatbot.model.ChatBotService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.seconds
 
 object OpenAIService: ChatBotService() {
     private lateinit var openAI: OpenAI
 
-    override fun init(settingDAO: SettingDAO) {
-        CoroutineScope(Dispatchers.IO).launch {
+    override suspend fun init(settingDAO: SettingDAO) {
+        withContext(Dispatchers.IO) {
             openAI = OpenAI(
                 token = settingDAO.getSettingByService(service = "OpenAI").apiKey,
                 timeout = Timeout(socket = 60.seconds)
