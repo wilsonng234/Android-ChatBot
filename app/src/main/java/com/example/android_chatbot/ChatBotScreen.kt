@@ -102,9 +102,10 @@ fun ChatBotApp(
             .collectAsState(initial = emptyList())
         channel to messages.lastOrNull()
     }
-    val recentFiveChannelsLastMessage = channelsLastMessage.sortedByDescending { channelsLastMessage ->
-        channelsLastMessage.second?.createdTime ?: 0
-    }.subList(0, channelsLastMessage.size.coerceAtMost(5))
+    val recentFiveChannelsLastMessage =
+        channelsLastMessage.sortedByDescending { channelsLastMessage ->
+            channelsLastMessage.second?.createdTime ?: 0
+        }.subList(0, channelsLastMessage.size.coerceAtMost(5))
 
     fun handleNavigationIconClicked(canNavigateBack: Boolean): () -> Unit {
         return if (!canNavigateBack) {
@@ -239,6 +240,7 @@ fun ChatBotApp(
                     composable(route = ChatBotScreen.Start.name) {
                         StartScreen(channelDAO = channelDAO,
                             messageDAO = messageDAO,
+                            settingDAO = settingDAO,
                             onClick = { handleChatCardClicked(it) },
                             handleEnteringChatRoom = { handleEnteringChatRoom(it) })
                     }
