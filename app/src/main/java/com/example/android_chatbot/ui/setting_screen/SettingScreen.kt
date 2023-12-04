@@ -3,6 +3,7 @@ package com.example.android_chatbot.ui.setting_screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -105,6 +106,8 @@ fun SettingScreen(
     Column(
         modifier = modifier.padding(vertical = 8.dp)
     ) {
+        Spacer(modifier = modifier.padding(vertical = 8.dp))
+
         for (apiKeyInputField in apiKeyInputFields) {
             val (expanded, setExpanded) = remember { mutableStateOf(false) }
 
@@ -136,7 +139,11 @@ fun SettingScreen(
                 modifier = modifier
             )
 
-            Divider(modifier = modifier.padding(horizontal = 8.dp, vertical = 32.dp))
+            Divider(
+                modifier = modifier
+                    .padding(horizontal = 8.dp, vertical = 16.dp)
+                    .padding(top = 8.dp)
+            )
         }
 
         if (apiKeyInputFields.size < services.size) {
@@ -151,7 +158,7 @@ fun SettingScreen(
             horizontalArrangement = Arrangement.Center,
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 64.dp, vertical = 32.dp)
+                .padding(horizontal = 64.dp, vertical = 16.dp)
         ) {
             ResetFormButton(handleResetForm = handleResetForm, modifier = modifier.weight(0.2f))
             SubmitFormButton(
@@ -186,7 +193,8 @@ private fun ApiKeyInputSection(
 
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                ExposedDropdownMenuBox(expanded = expanded,
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
                     onExpandedChange = { setExpanded(!expanded) }) {
                     OutlinedTextField(readOnly = true,
                         value = selectedOptionText,
@@ -227,7 +235,9 @@ private fun ApiKeyInputSection(
                 value = apiKey,
                 onValueChange = { setApiKey(it) },
                 label = "Your API Key",
-                modifier = Modifier.fillMaxWidth(0.97f)
+                modifier = Modifier
+                    .fillMaxWidth(0.97f)
+                    .padding(top = 16.dp)
             )
         }
     }
