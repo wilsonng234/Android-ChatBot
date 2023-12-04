@@ -96,15 +96,15 @@ fun ChatBotApp(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val channels by channelDAO.getFiveRecentChannels().collectAsState(initial = emptyList())
-
-    fun handleChatCardClicked(Id: Long) {
-        scope.launch {
-            drawerState.close()
-        }
-
-        navHostController.navigate(ChatBotScreen.Chat.name + "/" + Id.toString())
+    val channels by channelDAO.getAll().collectAsState(initial = emptyList())
+    val channelsLastMessage = channels.map { channel ->
+        val messages by messageDAO.getMessagesByChannelId(channel.id)
+            .collectAsState(initial = emptyList())
+        channel to messages.lastOrNull()
     }
+    val recentFiveChannelsLastMessage = channelsLastMessage.sortedByDescending { channelsLastMessage ->
+        channelsLastMessage.second?.createdTime ?: 0
+    }.subList(0, channelsLastMessage.size.coerceAtMost(5))
 
     fun handleNavigationIconClicked(canNavigateBack: Boolean): () -> Unit {
         return if (!canNavigateBack) {
@@ -120,6 +120,18 @@ fun ChatBotApp(
                 navHostController.navigateUp()
             }
         }
+    }
+
+    fun handleEnteringChatRoom(channelId: Long) {
+        navHostController.navigate(ChatBotScreen.Chat.name + "/$channelId")
+    }
+
+    fun handleChatCardClicked(channelId: Long) {
+        scope.launch {
+            drawerState.close()
+        }
+
+        handleEnteringChatRoom(channelId)
     }
 
     fun handleMenuItemClicked(menuItemId: Int) {
@@ -142,10 +154,6 @@ fun ChatBotApp(
         }
     }
 
-    fun handleChatRoomClicked(channelId: Long) {
-        navHostController.navigate(ChatBotScreen.Chat.name + "/$channelId")
-    }
-
     val menuItemIds = listOf(
         ChatBotScreen.AllChats.title, ChatBotScreen.SelectBot.title, ChatBotScreen.Settings.title
     )
@@ -158,7 +166,9 @@ fun ChatBotApp(
                 Text("Android ChatBot", modifier = Modifier.padding(16.dp))
                 Divider()
 
-                for (channel in channels) {
+                for (channelLastMessage in recentFiveChannelsLastMessage) {
+                    val channel = channelLastMessage.first
+
                     val messages by messageDAO.getMessagesByChannelId(channel.id)
                         .collectAsState(initial = emptyList())
                     val lastMessage = messages.lastOrNull()
@@ -229,14 +239,15 @@ fun ChatBotApp(
                     composable(route = ChatBotScreen.Start.name) {
                         StartScreen(channelDAO = channelDAO,
                             messageDAO = messageDAO,
-                            onClick = { handleChatCardClicked(it) })
+                            onClick = { handleChatCardClicked(it) },
+                            handleEnteringChatRoom = { handleEnteringChatRoom(it) })
                     }
                     composable(route = ChatBotScreen.AllChats.name) {
                         Text("AllChats Screen")
                     }
                     composable(route = ChatBotScreen.SelectBot.name) {
                         SelectBotScreen(channelDAO = channelDAO, handleChatRoomClicked = {
-                            handleChatRoomClicked(it)
+                            handleEnteringChatRoom(it)
                         })
                     }
                     composable(route = ChatBotScreen.Settings.name) {

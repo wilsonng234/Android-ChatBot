@@ -34,6 +34,7 @@ fun ChatHistoryCard(
     recentChat: String,
     time: Long?,
     onClick: (Long) -> Unit,
+    cardHeight: Int = 140,
     modifier: Modifier = Modifier
 ) {
     var formattedDate = "";
@@ -44,7 +45,7 @@ fun ChatHistoryCard(
     }
 
     Column(
-        modifier = modifier.height(140.dp)
+        modifier = modifier.height(cardHeight.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
