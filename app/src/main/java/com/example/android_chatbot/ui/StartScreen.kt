@@ -3,7 +3,6 @@ package com.example.android_chatbot.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -12,18 +11,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.example.android_chatbot.R
+import com.example.android_chatbot.data.channel.Channel
 import com.example.android_chatbot.data.channel.ChannelDAO
+import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.message.MessageDAO
+import com.example.android_chatbot.model.azure.AzureOpenAIService
 import com.example.android_chatbot.ui.components.ChatHistoryCard
 import com.example.android_chatbot.ui.components.RoundedInputField
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun StartScreen(
     channelDAO: ChannelDAO,
     messageDAO: MessageDAO,
     onClick: (Long) -> Unit,
+    handleEnteringChatRoom: (channelId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val channels by channelDAO.getAll().collectAsState(initial = emptyList())
@@ -76,10 +83,47 @@ fun StartScreen(
         }
 
         RoundedInputField(
-            value = inputPrompt,
-            onValueChange = setInputPrompt,
-            onSendMessage = { /*TODO*/ },
-            modifier = modifier
+            value = inputPrompt, onValueChange = setInputPrompt, onSendMessage = {
+                val service = "Azure OpenAI"
+                val model = "gpt-4"
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val channelIds = channelDAO.insertAll(
+                        Channel(
+                            service = service, model = model
+                        )
+                    )
+                    val channelId = channelIds[0]
+
+                    val inputMessage = Message(
+                        channelId = channelId,
+                        role = "user",
+                        content = inputPrompt,
+                        createdTime = System.currentTimeMillis()
+                    )
+                    messageDAO.insertAll(inputMessage)
+
+                    async {
+                        val response = AzureOpenAIService.getChatResponse(
+                            messages = listOf(inputMessage), model = model
+                        )
+                        messageDAO.insertAll(
+                            Message(
+                                channelId = channelId,
+                                role = "assistant",
+                                content = response.first,
+                                createdTime = System.currentTimeMillis()
+                            )
+                        )
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        handleEnteringChatRoom(channelId)
+                    }
+
+                    setInputPrompt("")
+                }
+            }, modifier = modifier
         )
     }
 }

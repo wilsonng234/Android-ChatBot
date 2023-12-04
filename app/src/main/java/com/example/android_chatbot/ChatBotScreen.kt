@@ -239,7 +239,8 @@ fun ChatBotApp(
                     composable(route = ChatBotScreen.Start.name) {
                         StartScreen(channelDAO = channelDAO,
                             messageDAO = messageDAO,
-                            onClick = { handleChatCardClicked(it) })
+                            onClick = { handleChatCardClicked(it) },
+                            handleEnteringChatRoom = { handleEnteringChatRoom(it) })
                     }
                     composable(route = ChatBotScreen.AllChats.name) {
                         Text("AllChats Screen")
