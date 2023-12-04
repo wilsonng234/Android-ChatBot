@@ -102,9 +102,9 @@ fun ChatBotApp(
             .collectAsState(initial = emptyList())
         channel to messages.lastOrNull()
     }
-    val sortedChannelsLastMessage = channelsLastMessage.sortedByDescending { channelsLastMessage ->
+    val recentFiveChannelsLastMessage = channelsLastMessage.sortedByDescending { channelsLastMessage ->
         channelsLastMessage.second?.createdTime ?: 0
-    }
+    }.subList(0, channelsLastMessage.size.coerceAtMost(5))
 
     fun handleNavigationIconClicked(canNavigateBack: Boolean): () -> Unit {
         return if (!canNavigateBack) {
@@ -166,7 +166,7 @@ fun ChatBotApp(
                 Text("Android ChatBot", modifier = Modifier.padding(16.dp))
                 Divider()
 
-                for (channelLastMessage in sortedChannelsLastMessage) {
+                for (channelLastMessage in recentFiveChannelsLastMessage) {
                     val channel = channelLastMessage.first
 
                     val messages by messageDAO.getMessagesByChannelId(channel.id)
