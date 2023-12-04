@@ -52,7 +52,7 @@ fun RoundedInputField(
 @Composable
 private fun SendIconButton(
     onClick: () -> Unit = {},
-    color: Color = MaterialTheme.colorScheme.primary,
+    color: Color = MaterialTheme.colorScheme.secondary,
     modifier: Modifier = Modifier
 ) {
     IconButton(onClick = onClick, modifier = modifier) {
