@@ -1,6 +1,7 @@
 package com.example.android_chatbot
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,11 +30,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.mediumTopAppBarColors
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -53,6 +59,8 @@ import com.example.android_chatbot.ui.components.ChatHistoryCard
 import com.example.android_chatbot.ui.components.MenuItemCard
 import com.example.android_chatbot.ui.select_bot_screen.SelectBotScreen
 import com.example.android_chatbot.ui.setting_screen.SettingScreen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 enum class ChatBotScreen(@StringRes val title: Int) {
@@ -74,7 +82,7 @@ fun ChatBotTopAppBar(
     TopAppBar(title = { Text("") }, colors = mediumTopAppBarColors(
         containerColor = MaterialTheme.colorScheme.primaryContainer
     ), modifier = modifier, navigationIcon = {
-        Row{
+        Row {
             IconButton(onClick = handleNavigationIconClicked(canNavigateBack)) {
                 Icon(
                     imageVector = if (!canNavigateBack) Icons.Filled.Menu else Icons.Filled.ArrowBack,
@@ -83,21 +91,36 @@ fun ChatBotTopAppBar(
                     )
                 )
             }
-            Column(Modifier.align(Alignment.CenterVertically)) {
-                if(currentScreen == ChatBotScreen.Start.name){
-                    Text("PayAsYouGo")
-                }else if(currentScreen == ChatBotScreen.Settings.name){
-                    Text("Setting")
-                }else if(currentScreen == ChatBotScreen.SelectBot.name){
-                    Text("Select Your partner to chat today!")
-                }else if (currentScreen.contains(ChatBotScreen.Chat.name)){
+            Row(Modifier.align(Alignment.CenterVertically)) {
+                if (currentScreen.contains(ChatBotScreen.Chat.name)) {
                     if (channel != null) {
-                        Text(channel.topic)
-                        Text(channel.model)
+                        Image(
+                            painter = painterResource(id = channel.id.toInt()),
+                            contentDescription = channel.id.toString(),
+                            modifier = modifier
+                                .padding(12.dp)
+                                .weight(0.2f)
+                        )
+                    }else{
+                        Text("null")
                     }
-
+                }
+                Column() {
+                    if (currentScreen == ChatBotScreen.Start.name) {
+                        Text("PayAsYouGo")
+                    } else if (currentScreen == ChatBotScreen.Settings.name) {
+                        Text("Setting")
+                    } else if (currentScreen == ChatBotScreen.SelectBot.name) {
+                        Text("Select Your partner to chat today!")
+                    } else if (currentScreen.contains(ChatBotScreen.Chat.name)) {
+                        if (channel != null) {
+                            Text(channel.topic)
+                            Text(channel.model)
+                        }
+                    }
                 }
             }
+
 
         }
 
@@ -114,6 +137,18 @@ fun ChatBotApp(
 ) {
     val backStackEntry by navHostController.currentBackStackEntryAsState()
     val currentScreen = backStackEntry?.destination?.route ?: ChatBotScreen.Start.name
+
+    val currentChannelId = backStackEntry?.arguments?.getLong("channelId") ?: null
+    var currentChannel by remember { mutableStateOf<Channel?>(null) }
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            currentChannel = if (currentChannelId != null) {
+                channelDAO.getChannelById(currentChannelId)
+            } else {
+                null
+            }
+        }
+    }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -230,9 +265,8 @@ fun ChatBotApp(
         }
     }) {
         Scaffold(topBar = {
-            val currentChannelId = backStackEntry?.arguments?.getLong("channelId") ?: null
-            val currentChannel = if(currentChannelId != null){channelDAO.getChannelById(currentChannelId)}
-                                 else{null}
+
+
             ChatBotTopAppBar(
                 channel = currentChannel,
                 currentScreen = currentScreen,
