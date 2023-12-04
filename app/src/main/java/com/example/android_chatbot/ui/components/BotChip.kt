@@ -17,12 +17,12 @@ import androidx.compose.ui.unit.dp
 fun BotChip(
     label: String,
     selected: Boolean = false,
-    setSelected: (Boolean) -> Unit = { },
+    handleBotChipClicked: () -> Unit = { },
     leadingIcon: @Composable (() -> Unit) = { },
     modifier: Modifier = Modifier
 ) {
     FilterChip(
-        onClick = { setSelected(!selected) },
+        onClick = { handleBotChipClicked() },
         label = { Text(label) },
         selected = selected,
         leadingIcon = leadingIcon,
