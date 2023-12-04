@@ -2,9 +2,12 @@ package com.example.android_chatbot.ui.chat_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.model.azure.AzureOpenAIService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 //
 class ChatViewModel(
@@ -22,6 +25,8 @@ class ChatViewModel(
     }
 
     init {
-        AzureOpenAIService.init(settingDAO)
+        viewModelScope.launch(Dispatchers.IO) {
+            AzureOpenAIService.init(settingDAO)
+        }
     }
 }
