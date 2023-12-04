@@ -18,9 +18,9 @@ import com.example.android_chatbot.data.channel.Channel
     )]
 )
 data class Message(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
 
-    @ColumnInfo(name = "channel_id") val channelId: Int,
+    @ColumnInfo(name = "channel_id") val channelId: Long,
 
     @ColumnInfo(name = "role") val role: String,
 

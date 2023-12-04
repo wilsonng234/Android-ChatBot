@@ -49,6 +49,7 @@ import com.example.android_chatbot.ui.StartScreen
 import com.example.android_chatbot.ui.chat_screen.ChatScreen
 import com.example.android_chatbot.ui.components.ChatHistoryCard
 import com.example.android_chatbot.ui.components.MenuItemCard
+import com.example.android_chatbot.ui.select_bot_screen.SelectBotScreen
 import com.example.android_chatbot.ui.setting_screen.SettingScreen
 import kotlinx.coroutines.launch
 
@@ -97,7 +98,7 @@ fun ChatBotApp(
 
     val channels by channelDAO.getFiveRecentChannels().collectAsState(initial = emptyList())
 
-    fun handleChatCardClicked(Id: Int) {
+    fun handleChatCardClicked(Id: Long) {
         scope.launch {
             drawerState.close()
         }
@@ -141,6 +142,10 @@ fun ChatBotApp(
         }
     }
 
+    fun handleChatRoomClicked(channelId: Long) {
+        navHostController.navigate(ChatBotScreen.Chat.name + "/$channelId")
+    }
+
     val menuItemIds = listOf(
         ChatBotScreen.AllChats.title, ChatBotScreen.SelectBot.title, ChatBotScreen.Settings.title
     )
@@ -179,7 +184,7 @@ fun ChatBotApp(
                         topic = channel.topic,
                         recentChat = lastMessage?.content ?: "",
                         time = lastMessage?.createdTime,
-                        onClick = ::handleChatCardClicked,
+                        onClick = { handleChatCardClicked(it) },
                         modifier = Modifier
                     )
                 }
@@ -222,30 +227,30 @@ fun ChatBotApp(
                     navController = navHostController, startDestination = ChatBotScreen.Start.name
                 ) {
                     composable(route = ChatBotScreen.Start.name) {
-                        StartScreen(
-                            channelDAO = channelDAO,
+                        StartScreen(channelDAO = channelDAO,
                             messageDAO = messageDAO,
-                            onClick = ::handleChatCardClicked
-                        )
+                            onClick = { handleChatCardClicked(it) })
                     }
                     composable(route = ChatBotScreen.AllChats.name) {
                         Text("AllChats Screen")
                     }
                     composable(route = ChatBotScreen.SelectBot.name) {
-                        Text("SelectBot Screen")
+                        SelectBotScreen(channelDAO = channelDAO, handleChatRoomClicked = {
+                            handleChatRoomClicked(it)
+                        })
                     }
                     composable(route = ChatBotScreen.Settings.name) {
                         SettingScreen(settingDAO = settingDAO)
                     }
                     composable(
                         route = ChatBotScreen.Chat.name + "/{channelId}",
-                        arguments = listOf(navArgument("channelId") { type = NavType.IntType })
+                        arguments = listOf(navArgument("channelId") { type = NavType.LongType })
                     ) {
                         ChatScreen(
                             channelDAO = channelDAO,
                             messageDAO = messageDAO,
                             settingDAO = settingDAO,
-                            channelId = it.arguments!!.getInt("channelId")
+                            channelId = it.arguments!!.getLong("channelId")
                         )
                     }
                 }

@@ -1,9 +1,13 @@
 package com.example.android_chatbot.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.android_chatbot.R
 import com.example.android_chatbot.data.channel.ChannelDAO
 import com.example.android_chatbot.data.message.MessageDAO
@@ -11,11 +15,19 @@ import com.example.android_chatbot.ui.components.ChatHistoryCard
 
 @Composable
 fun StartScreen(
-    channelDAO: ChannelDAO, messageDAO: MessageDAO,
-    onClick: (Int) -> Unit, modifier: Modifier = Modifier
+    channelDAO: ChannelDAO,
+    messageDAO: MessageDAO,
+    onClick: (Long) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val channels by channelDAO.getAll().collectAsState(initial = emptyList())
-    if (channels.isNotEmpty()) {
+
+    Column(modifier = modifier) {
+        Divider(
+            modifier = modifier
+                .padding(top = 8.dp)
+        )
+
         for (channel in channels) {
             val messages by messageDAO.getMessagesByChannelId(channel.id)
                 .collectAsState(initial = emptyList())
@@ -47,5 +59,4 @@ fun StartScreen(
             )
         }
     }
-
 }

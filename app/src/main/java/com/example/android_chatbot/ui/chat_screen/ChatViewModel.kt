@@ -10,12 +10,12 @@ import com.example.android_chatbot.model.azure.AzureOpenAIService
 class ChatViewModel(
     private val messageDAO: MessageDAO,
     private val settingDAO: SettingDAO,
-    private val channelId: Int
+    private val channelId: Long
 ) : ViewModel() {
     class Factory(
         private val messageDAO: MessageDAO,
         private val settingDAO: SettingDAO,
-        private val channelId: Int
+        private val channelId: Long
     ) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T =
             ChatViewModel(messageDAO, settingDAO, channelId) as T

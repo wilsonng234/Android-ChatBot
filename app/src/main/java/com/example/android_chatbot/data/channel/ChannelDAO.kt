@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ChannelDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertAll(vararg channels: Channel)
+    fun insertAll(vararg channels: Channel): List<Long>
 
     @Query(
         value = """WITH channel_message AS (
@@ -26,8 +26,8 @@ interface ChannelDAO {
     fun getAll(): Flow<List<Channel>>
 
     @Query("SELECT * FROM channel where id = :id")
-    fun getChannelById(id: Int): Channel
+    fun getChannelById(id: Long): Channel
 
     @Query("UPDATE channel SET topic = :topic WHERE id = :id")
-    fun updateChannelTopic(topic: String, id: Int)
+    fun updateChannelTopic(topic: String, id: Long)
 }

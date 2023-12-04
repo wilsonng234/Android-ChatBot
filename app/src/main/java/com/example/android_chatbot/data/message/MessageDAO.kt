@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MessageDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertAll(vararg messages: Message)
+    fun insertAll(vararg messages: Message): List<Long>
 
     @Query("SELECT * FROM message order by created_time asc")
     fun getAll(): Flow<List<Message>>
 
     @Query("SELECT * FROM message where channel_id = :channelId order by created_time asc")
-    fun getMessagesByChannelId(channelId: Int): Flow<List<Message>>
+    fun getMessagesByChannelId(channelId: Long): Flow<List<Message>>
 }

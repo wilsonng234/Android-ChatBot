@@ -34,7 +34,7 @@ fun ChatScreen(
     channelDAO: ChannelDAO,
     messageDAO: MessageDAO,
     settingDAO: SettingDAO,
-    channelId: Int,
+    channelId: Long,
     modifier: Modifier = Modifier
 ) {
     val viewModel: ChatViewModel =
