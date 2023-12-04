@@ -11,15 +11,16 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.setting.SettingDAO
+import com.example.android_chatbot.model.ChatBotService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-object OpenAIService {
+object OpenAIService: ChatBotService() {
     private lateinit var openAI: OpenAI
 
-    fun init(settingDAO: SettingDAO) {
+    override fun init(settingDAO: SettingDAO) {
         CoroutineScope(Dispatchers.IO).launch {
             openAI = OpenAI(
                 token = settingDAO.getSettingByService(service = "OpenAI").apiKey,
@@ -35,7 +36,7 @@ object OpenAIService {
      *   The first element is the response content.
      *   The second element is whether the response is successful.
      **/
-    suspend fun getChatResponse(messages: List<Message>, model: String): Pair<String, Boolean> {
+    override suspend fun getChatResponse(messages: List<Message>, model: String): Pair<String, Boolean> {
         return try {
             val chatCompletionRequest =
                 ChatCompletionRequest(model = ModelId(model), messages = messages.map {

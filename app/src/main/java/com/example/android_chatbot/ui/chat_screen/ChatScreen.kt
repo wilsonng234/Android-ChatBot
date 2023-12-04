@@ -22,6 +22,7 @@ import com.example.android_chatbot.data.message.Message
 import com.example.android_chatbot.data.message.MessageDAO
 import com.example.android_chatbot.data.setting.SettingDAO
 import com.example.android_chatbot.model.azure.AzureOpenAIService
+import com.example.android_chatbot.model.openai.OpenAIService
 import com.example.android_chatbot.ui.components.MessageBubble
 import com.example.android_chatbot.ui.components.RoundedInputField
 import kotlinx.coroutines.CoroutineScope
@@ -79,6 +80,12 @@ private fun handleOnSendMessage(
     setInputPrompt: (String) -> Unit
 ) {
     CoroutineScope(Dispatchers.IO).launch {
+        val service = when (channel.service) {
+            "Azure OpenAI" -> AzureOpenAIService
+            "OpenAI" -> OpenAIService
+            else -> throw Exception("Invalid service")
+        }
+
         val inputMessage = Message(
             channelId = channel.id,
             role = "user",
