@@ -248,9 +248,11 @@ fun ChatBotApp(
                         Text("AllChats Screen")
                     }
                     composable(route = ChatBotScreen.SelectBot.name) {
-                        SelectBotScreen(channelDAO = channelDAO, handleChatRoomClicked = {
-                            handleEnteringChatRoom(it)
-                        })
+                        SelectBotScreen(channelDAO = channelDAO,
+                            settingDAO = settingDAO,
+                            handleChatRoomClicked = {
+                                handleEnteringChatRoom(it)
+                            })
                     }
                     composable(route = ChatBotScreen.Settings.name) {
                         SettingScreen(settingDAO = settingDAO)
