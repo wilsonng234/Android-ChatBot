@@ -7,3 +7,12 @@ This project introduces a pay-as-you-go application that offers users access to 
 SDK: Amazon Corretto version 19.0.2
 Android SDK: Android API 34
 Android Studio: Android Studio Giraffe | 2022.3.1 Patch 1
+
+# Screenshots
+<table>
+    <tr>
+        <td> <img src="imgs/home.png"> </td>
+        <td> <img src="imgs/chat-room.png"> </td>
+        <td> <img src="imgs/api-settings.png"> </td>
+    </tr>
+</table>
